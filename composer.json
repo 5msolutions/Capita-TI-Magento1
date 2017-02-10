@@ -1,0 +1,11 @@
+{
+  "name":"capita/ti",
+  "type":"magento-module",
+  "description":"Translate catalog and CMS to several languages.",
+  "authors":[
+    {
+      "name":"Daniel Deady",
+      "email":"daniel@clockworkgeek.com"
+    }
+  ]
+}
