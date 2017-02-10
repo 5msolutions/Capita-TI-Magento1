@@ -1,0 +1,4 @@
+modules/Capita_TI.xml app/etc/modules/Capita_TI.xml
+code app/code/community/Capita/TI
+design/layout/capita_ti.xml app/design/adminhtml/default/default/layout/capita_ti.xml
+locale/en_US.csv app/locale/en_US/Capita_TI.csv

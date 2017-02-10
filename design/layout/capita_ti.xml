@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <adminhtml_capita_request_index>
+        <reference name="content">
+            <block type="capita_ti/adminhtml_request" />
+        </reference>
+    </adminhtml_capita_request_index>
+
+    <adminhtml_capita_request_new>
+        <reference name="content">
+            <block type="capita_ti/adminhtml_request_new" />
+        </reference>
+    </adminhtml_capita_request_new>
+</layout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+    <modules>
+        <Capita_TI>
+            <version>0.0.0</version>
+        </Capita_TI>
+    </modules>
+
+    <global>
+        <blocks>
+            <capita_ti>
+                <class>Capita_TI_Block</class>
+            </capita_ti>
+        </blocks>
+        <helpers>
+            <capita_ti>
+                <class>Capita_TI_Helper</class>
+            </capita_ti>
+        </helpers>
+        <models>
+            <capita_ti>
+                <class>Capita_TI_Model</class>
+            </capita_ti>
+        </models>
+    </global>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <capita_ti before="Mage_Adminhtml">Capita_TI_Adminhtml</capita_ti>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <events>
+            <!-- Add 'translate' action to 'manage products' page -->
+            <adminhtml_catalog_product_grid_prepare_massaction>
+                <observers>
+                    <capita_ti_translate_action>
+                        <class>capita_ti/observer</class>
+                        <method>addMassActionToBlock</method>
+                    </capita_ti_translate_action>
+                </observers>
+            </adminhtml_catalog_product_grid_prepare_massaction>
+        </events>
+        <layout>
+            <updates>
+                <capita_ti>
+                    <file>capita_ti.xml</file>
+                </capita_ti>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Capita_TI>
+                    <files>
+                        <default>Capita_TI.csv</default>
+                    </files>
+                </Capita_TI>
+            </modules>
+        </translate>
+    </adminhtml>
+
+    <phpunit>
+        <suite>
+            <modules>
+                <Capita_TI />
+            </modules>
+        </suite>
+    </phpunit>
+</config>
