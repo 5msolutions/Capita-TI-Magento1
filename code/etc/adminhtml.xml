@@ -21,6 +21,14 @@
                                 <title>Capita Translations</title>
                                 <sort_order>28</sort_order>
                             </capita_request>
+                            <config>
+                                <children>
+                                    <capita_ti>
+                                        <title>Capita Translations</title>
+                                        <sort_order>70</sort_order>
+                                    </capita_ti>
+                                </children>
+                            </config>
                         </children>
                     </system>
                 </children>
