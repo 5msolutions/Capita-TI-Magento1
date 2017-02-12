@@ -8,8 +8,6 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
         $form->setUseContainer(true);
         $datetimeFormat = 'y-MM-d HH:mm:ss';
-        Mage::log(__METHOD__);
-        Mage::log($datetimeFormat);
         $nextWeek = new Zend_Date();
         $nextWeek->addWeek(1);
 
