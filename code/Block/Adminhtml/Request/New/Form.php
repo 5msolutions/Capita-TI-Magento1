@@ -10,20 +10,30 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         $datetimeFormat = 'y-MM-d HH:mm:ss';
         $nextWeek = new Zend_Date();
         $nextWeek->addWeek(1);
+        $locales = Mage::helper('capita_ti')->getStoreLocalesOptions();
 
         $general = $form->addFieldset('general', array(
             'legend' => $this->__('General')
         ));
-        $general->addField('instructions', 'textarea', array(
-            'name' => 'instructions',
-            'label' => $this->__('Instructions')
-        ));
-        $general->addField('languages', 'multiselect', array(
-            'name' => 'languages',
-            'label' => $this->__('Languages'),
+        $general->addField('source_language', 'select', array(
+            'name' => 'source_language',
+            'label' => $this->__('Source Language'),
             'required' => true,
-            'values' => Mage::helper('capita_ti')->getStoreLocalesOptions()
+            'values' => $locales
         ));
+        $general->addField('dest_language', 'multiselect', array(
+            'name' => 'dest_language',
+            'label' => $this->__('Requested Languages'),
+            'required' => true,
+            'values' => $locales
+        ))
+        ->setAfterElementHtml('<script type="text/javascript">
+            Event.observe("source_language", "change", function(event) {
+                $$("#dest_language option").invoke("writeAttribute","disabled",null);
+                $$("#dest_language option[value="+$F(this)+"]").invoke("writeAttribute","disabled","disabled");
+            });
+            $$("#dest_language option[value='.@$locales[0]['value'].']").invoke("writeAttribute","disabled","disabled");
+            </script>');
         $general->addField('delivery_date', 'date', array(
             'name' => 'delivery_date',
             'label' => $this->__('Expected Delivery Date'),
