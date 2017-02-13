@@ -4,18 +4,25 @@ class Capita_TI_Helper_Data extends Mage_Core_Helper_Data
 {
 
     /**
-     * Get unique ISO locale codes available on frontend
+     * Returns module string as specified in config.xml
      * 
-     * @return string[]
+     * @return string
      */
-    public function getStoreLocaleCodes()
+    public function getModuleVersion()
     {
-        $codes = array();
-        /* @var $store Mage_Core_Model_Store */
-        foreach (Mage::app()->getStores() as $store) {
-            $codes[] = (string) $store->getConfig('general/locale/code');
+        return (string) Mage::getConfig()->getNode('modules/Capita_TI/version');
+    }
+
+    public function convertHashToOptions($hash)
+    {
+        $options = array();
+        foreach ($hash as $value => $label) {
+            $options[] = array(
+                'value' => $value,
+                'label' => $label
+            );
         }
-        return array_unique($codes);
+        return $options;
     }
 
     /**
@@ -25,23 +32,8 @@ class Capita_TI_Helper_Data extends Mage_Core_Helper_Data
      */
     public function getStoreLocalesOptions()
     {
-        $options = array();
-        $codes = $this->getStoreLocaleCodes();
-        foreach (Mage::app()->getLocale()->getOptionLocales() as $option) {
-            if (is_array($option) && in_array(@$option['value'], $codes)) {
-                $options[] = $option;
-            }
-        }
-        return $options;
-    }
-
-    public function getStoreLocalesNames()
-    {
-        $names = array();
-        foreach ($this->getStoreLocalesOptions() as $option) {
-            $names[@$option['value']] = @$option['label'];
-        }
-        return $names;
+        $languages = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse();
+        return $this->convertHashToOptions($languages);
     }
 
     /**

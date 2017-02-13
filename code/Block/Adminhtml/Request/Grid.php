@@ -31,7 +31,7 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 			'index' => 'languages',
 			'header' => $this->__('Languages'),
 		    'type' => 'options',
-		    'options' => Mage::helper('capita_ti')->getStoreLocalesNames()
+		    'options' => Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse()
 		));
 		$this->addColumn('delivery_date', array(
 			'index' => 'delivery_date',

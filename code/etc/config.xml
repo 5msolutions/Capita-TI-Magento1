@@ -73,4 +73,10 @@
             </modules>
         </suite>
     </phpunit>
+
+    <default>
+        <capita_ti>
+            <base_url><![CDATA[https://api.capitatranslationinterpreting.com/staging/api/v1.0]]></base_url>
+        </capita_ti>
+    </default>
 </config>
