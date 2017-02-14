@@ -22,6 +22,7 @@
 "Requests","Requests"
 "Source Language","Source Language"
 "Status","Status"
+"There was a problem connecting to the server: %s","There was a problem connecting to the server: %s"
 "Translate","Translate"
 "Translation Requests","Translation Requests"
 "Username","Username"
