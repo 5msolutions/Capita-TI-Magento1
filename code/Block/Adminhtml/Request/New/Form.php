@@ -7,9 +7,6 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
     {
         $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
         $form->setUseContainer(true);
-        $datetimeFormat = 'y-MM-d HH:mm:ss';
-        $nextWeek = new Zend_Date();
-        $nextWeek->addWeek(1);
         $locales = Mage::helper('capita_ti')->getStoreLocalesOptions();
 
         $general = $form->addFieldset('general', array(
@@ -34,15 +31,6 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             });
             $$("#dest_language option[value='.@$locales[0]['value'].']").invoke("writeAttribute","disabled","disabled");
             </script>');
-        $general->addField('delivery_date', 'date', array(
-            'name' => 'delivery_date',
-            'label' => $this->__('Expected Delivery Date'),
-            'required' => true,
-            'time' => true,
-            'format' => $datetimeFormat,
-            'image' => $this->getSkinUrl('images/grid-cal.gif'),
-            'value' => $nextWeek->toString($datetimeFormat)
-        ));
 
         $products = $form->addFieldset('products', array(
             'legend' => $this->__('Products')
