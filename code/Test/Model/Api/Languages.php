@@ -13,7 +13,7 @@ class Capita_TI_Test_Model_Api_Languages extends EcomDev_PHPUnit_Test_Case
      */
     protected $subject;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->adapter = new Zend_Http_Client_Adapter_Test();
         $this->subject = Mage::getModel('capita_ti/api_languages', array(
@@ -21,7 +21,7 @@ class Capita_TI_Test_Model_Api_Languages extends EcomDev_PHPUnit_Test_Case
         ));
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         $this->subject->clearCache();
     }
