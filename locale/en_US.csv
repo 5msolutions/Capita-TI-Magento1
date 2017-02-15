@@ -1,3 +1,4 @@
+"# of products","# of products"
 "Authentication","Authentication"
 "Cannot write to ""%s""","Cannot write to ""%s"""
 "Capita","Capita"
@@ -26,6 +27,7 @@
 "Requests","Requests"
 "Source Language","Source Language"
 "Status","Status"
+"Submission Date","Submission Date"
 "There was a problem connecting to the server: %s","There was a problem connecting to the server: %s"
 "Translate","Translate"
 "Translation Requests","Translation Requests"

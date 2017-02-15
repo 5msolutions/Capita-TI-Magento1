@@ -6,8 +6,8 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
     public function __construct()
     {
         parent::__construct();
-        $this->setDefaultSort('request_id');
-        $this->setDefaultDir('DSEC');
+        $this->setDefaultSort('created_at');
+        $this->setDefaultDir('DESC');
 
         $this->setId('request_id');
     }
@@ -34,9 +34,15 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 		    'options' => Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse(),
 		    'filter_condition_callback' => array($this, 'filterLanguages')
 		));
-		$this->addColumn('delivery_date', array(
-			'index' => 'delivery_date',
-			'header' => $this->__('Expected Delivery'),
+		$this->addColumn('product_count', array(
+		    'index' => 'product_count',
+		    'header' => $this->__('# of products'),
+		    'type' => 'number',
+		    'width' => '100px'
+		));
+		$this->addColumn('created_at', array(
+			'index' => 'created_at',
+			'header' => $this->__('Submission Date'),
 		    'type' => 'datetime',
 			'width' => '100px'
 		));
