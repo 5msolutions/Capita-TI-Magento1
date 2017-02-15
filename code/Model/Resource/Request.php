@@ -16,11 +16,9 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             );
         }
 
-        if (!$request->hasProductCount()) {
-            $request->setProductCount(
-                count($request->getProductIds())
-            );
-        }
+        $request->setProductCount(
+            count($request->getProductIds())
+        );
 
         if (is_array($request->getProductAttributes())) {
             $request->setProductAttributes(

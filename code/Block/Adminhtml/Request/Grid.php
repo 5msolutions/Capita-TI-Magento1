@@ -10,6 +10,7 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
         $this->setDefaultDir('DESC');
 
         $this->setId('request_id');
+        $this->setUseAjax(true);
     }
 
 	protected function _prepareCollection()
@@ -60,5 +61,17 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
     public function filterLanguages(Capita_TI_Model_Resource_Request_Collection $collection, Mage_Adminhtml_Block_Widget_Grid_Column $column)
     {
         $collection->addFilterLikeLanguage($column->getFilter()->getValue());
+    }
+
+    public function getGridUrl($params = array())
+    {
+        return $this->getUrl('*/*/grid', $params);
+    }
+
+    public function getRowUrl($item)
+    {
+        return $this->getUrl('*/*/view', array(
+            'id' => $item->getId()
+        ));
     }
 }
