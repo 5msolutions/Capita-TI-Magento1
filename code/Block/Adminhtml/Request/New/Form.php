@@ -3,6 +3,21 @@
 class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Widget_Form
 {
 
+    /**
+     * Used for passing some temporary vars
+     * 
+     * @return Mage_Adminhtml_Model_Session
+     */
+    protected function getSession()
+    {
+        return Mage::getSingleton('adminhtml/session');
+    }
+
+    protected function getProductIds()
+    {
+        return (array) $this->getSession()->getTranslateProductIds();
+    }
+
     protected function _prepareForm()
     {
         $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
@@ -35,6 +50,16 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         $products = $form->addFieldset('products', array(
             'legend' => $this->__('Products')
         ));
+        if ($this->getProductIds()) {
+            $products->addField('product_ids', 'hidden', array(
+                'name' => 'product_ids',
+                'value' => implode(',', $this->getProductIds())
+            ));
+            $products->addField('product_count', 'label', array(
+                'label' => $this->__('Number of products selected'),
+                'value' => count($this->getProductIds())
+            ));
+        }
         $products->addField('product_attributes', 'multiselect', array(
             'name' => 'product_attributes',
             'label' => $this->__('Product Attributes'),

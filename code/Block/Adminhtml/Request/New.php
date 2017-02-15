@@ -15,9 +15,9 @@ class Capita_TI_Block_Adminhtml_Request_New extends Mage_Adminhtml_Block_Widget_
         $this->_headerText = $this->__('Request New Translation');
     }
 
-    public function getBackUrl()
+    public function getFormActionUrl()
     {
-        return $this->getUrl('*/catalog_product');
+        return $this->getUrl('*/capita_request/save');
     }
 
 }

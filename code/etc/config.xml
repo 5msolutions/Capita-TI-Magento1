@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Capita_TI>
-            <version>0.0.0</version>
+            <version>0.1.0</version>
         </Capita_TI>
     </modules>
 
@@ -20,8 +20,30 @@
         <models>
             <capita_ti>
                 <class>Capita_TI_Model</class>
+                <resourceModel>capita_ti_resource</resourceModel>
             </capita_ti>
+            <capita_ti_resource>
+                <class>Capita_TI_Model_Resource</class>
+                <entities>
+                    <request>
+                        <table>capita_ti_request</table>
+                    </request>
+                    <product>
+                        <table>capita_ti_product</table>
+                    </product>
+                    <attribute>
+                        <table>capita_ti_attribute</table>
+                    </attribute>
+                </entities>
+            </capita_ti_resource>
         </models>
+        <resources>
+            <capita_ti_setup>
+                <setup>
+                    <module>Capita_TI</module>
+                </setup>
+            </capita_ti_setup>
+        </resources>
     </global>
 
     <admin>

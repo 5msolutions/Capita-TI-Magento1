@@ -11,4 +11,10 @@
             <block type="capita_ti/adminhtml_request_new" />
         </reference>
     </adminhtml_capita_request_new>
+
+    <adminhtml_catalog_product_translate>
+        <reference name="content">
+            <block type="capita_ti/adminhtml_request_new" />
+        </reference>
+    </adminhtml_catalog_product_translate>
 </layout>

@@ -1,27 +1,9 @@
 <?php
 
-class Capita_TI_Adminhtml_Capita_RequestController extends Mage_Adminhtml_Controller_Action
+class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_Action
 {
 
     const MENU_PATH = 'system/capita_request';
-
-    protected function _isAllowed()
-    {
-        return Mage::getSingleton('admin/session')->isAllowed(self::MENU_PATH);
-    }
-
-    protected function _checkConnection()
-    {
-        if ($this->_isLayoutLoaded) {
-            try {
-                Mage::getSingleton('capita_ti/api_languages')->getLanguages();
-            }
-            catch (Zend_Http_Exception $e) {
-                Mage::logException($e);
-                $this->getLayout()->getMessagesBlock()->addError($this->__('There was a problem connecting to the server: %s', $e->getMessage()));
-            }
-        }
-    }
 
     public function indexAction()
     {
@@ -43,4 +25,12 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Mage_Adminhtml_Contro
         $this->renderLayout();
     }
 
+    public function saveAction()
+    {
+        /* @var $requests Capita_TI_Model_Api_Requests */
+        $requests = Mage::getModel('capita_ti/api_requests');
+        $filename = $requests->saveNewRequest($this->getRequest());
+        $this->_getSession()->addSuccess($filename.' was saved!');
+        $this->_redirect('*/*');
+    }
 }

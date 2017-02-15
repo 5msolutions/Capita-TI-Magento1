@@ -14,7 +14,7 @@ class Capita_TI_Model_Observer
         $block = $observer->getBlock();
         $block->getMassactionBlock()->addItem('capita_translate', array(
                 'label' => Mage::helper('capita_ti')->__('Translate'),
-                'url'   => Mage::getUrl('*/capita_product/enqueue')
+                'url'   => Mage::getUrl('*/catalog_product/translate')
             ));
     }
 
