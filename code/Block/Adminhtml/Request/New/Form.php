@@ -15,7 +15,7 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
 
     protected function getProductIds()
     {
-        return (array) $this->getSession()->getTranslateProductIds();
+        return (array) $this->getSession()->getCapitaProductIds();
     }
 
     protected function _prepareForm()

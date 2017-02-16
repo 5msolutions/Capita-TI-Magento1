@@ -11,7 +11,7 @@ class Capita_TI_Adminhtml_Catalog_ProductController extends Capita_TI_Controller
                 if (!$productIds) {
                     throw new Mage_Core_Exception($this->__('No products were selected'));
                 }
-                $this->_getSession()->setTranslateProductIds($productIds);
+                $this->_getSession()->setCapitaProductIds($productIds);
             }
 
             $this->loadLayout();
