@@ -63,8 +63,12 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         $products->addField('product_attributes', 'multiselect', array(
             'name' => 'product_attributes',
             'label' => $this->__('Product Attributes'),
+            'note' => $this->__(
+                'The default selection can be changed in <a href="%s">Configuration</a>.',
+                $this->getUrl('*/system_config/edit', array('section' => 'capita_ti'))),
             'required' => true,
-            'values' => Mage::helper('capita_ti')->getProductAttributesOptions()
+            'values' => Mage::getSingleton('capita_ti/source_product_attributes')->toOptionArray(),
+            'value' => Mage::getStoreConfig('capita_ti/products/attributes')
         ));
 
         $this->setForm($form);

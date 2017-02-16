@@ -102,6 +102,9 @@
     <default>
         <capita_ti>
             <base_url><![CDATA[https://api.capitatranslationinterpreting.com/staging/api/v1.0]]></base_url>
+            <products>
+                <attributes>description,image_label,meta_description,meta_keyword,meta_title,name,short_description,small_image_label,thumbnail_label</attributes>
+            </products>
         </capita_ti>
     </default>
 </config>
