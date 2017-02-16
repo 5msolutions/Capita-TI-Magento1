@@ -14,7 +14,7 @@ class Capita_TI_Block_Adminhtml_Request_View extends Mage_Adminhtml_Block_Widget
         $this->_removeButton('delete');
         $this->_removeButton('reset');
         $this->_removeButton('save');
-        $this->_headerText = $this->__('Request #%s', $this->_getRequest()->getRemoteNo());
+        $this->_headerText = $this->__('Request "%s"', $this->_getRequest()->getRemoteNo());
     }
 
     /**

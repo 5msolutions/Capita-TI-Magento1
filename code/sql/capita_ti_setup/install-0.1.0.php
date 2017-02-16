@@ -2,6 +2,8 @@
 
 /* @var $this Mage_Core_Model_Resource_Setup */
 
+$this->startSetup();
+
 $tableR = new Varien_Db_Ddl_Table();
 $tableRName = $this->getTable('capita_ti/request');
 $tableR->setName($tableRName);
@@ -94,3 +96,5 @@ $tableA->setComment('Attributes used in each request');
 $tableA->setOption('type', 'InnoDB');
 $tableA->setOption('charset', 'utf8');
 $this->getConnection()->createTable($tableA);
+
+$this->endSetup();

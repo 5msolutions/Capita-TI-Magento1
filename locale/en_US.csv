@@ -23,6 +23,8 @@
 "Product Attributes","Product Attributes"
 "Products","Products"
 "Request ""%d"" is unavailable","Request ""%d"" is unavailable"
+"Request ""%s""","Request ""%s"""
+"Request ""%s"" has been started","Request ""%s"" has been started"
 "Request #%s","Request #%s"
 "Requested Languages","Requested Languages"
 "Request New Translation","Request New Translation"

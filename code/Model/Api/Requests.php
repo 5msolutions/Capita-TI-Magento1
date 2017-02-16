@@ -18,12 +18,21 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         parent::__construct($this->getEndpoint('requests'), $config);
     }
 
+    /**
+     * 
+     * @param Zend_Controller_Request_Abstract $input
+     * @throws Mage_Adminhtml_Exception
+     * @throws Zend_Http_Exception
+     * @return string
+     */
     public function saveNewRequest(Zend_Controller_Request_Abstract $input)
     {
+        $sourceLanguage = $input->getParam('source_language');
+        $destLanguage = implode(',', $input->getParam('dest_language'));
         $this->setParameterPost('CustomerName', $this->getCustomerName());
         $this->setParameterPost('ContactName', $this->getContactName());
-        $this->setParameterPost('SourceLanguageCode', $input->getParam('source_language'));
-        $this->setParameterPost('TargetLanguageCodes', implode(',', $input->getParam('dest_language')));
+        $this->setParameterPost('SourceLanguageCode', $sourceLanguage);
+        $this->setParameterPost('TargetLanguageCodes', $destLanguage);
 
         // any future date will probably do
         // API demands a date but doesn't use it
@@ -40,17 +49,26 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $products->addAttributeToSelect($productAttributes);
 
         // limited to one file per upload for now
-        $varDir = Mage::getConfig()->getVarDir('export');
+        $varDir = Mage::getConfig()->getVarDir('export') . DS;
         if (!$varDir) {
             throw new Mage_Adminhtml_Exception(Mage::helper('capita_ti')->__('Cannot write to "%s"', $varDir));
         }
-        $filename = $varDir . DS . sprintf('capita-ti-%s.xliff', $nextWeek->toString('y-MM-d-HH-mm-ss'));
+        $filename = sprintf('capita-ti-%s.mgxliff', $nextWeek->toString('y-MM-d-HH-mm-ss'));
 
         /* @var $output Capita_TI_Model_Xliff_Writer */
         $output = Mage::getModel('capita_ti/xliff_writer');
-        $output->output($filename, $products, null, $productAttributes);
-        $this->setFileUpload($filename, 'files');
-        $this->request('POST');
-        return $filename;
+        $output->output($varDir.$filename, $products, Mage_Catalog_Model_Product::ENTITY, $productAttributes);
+        $this->setFileUpload($varDir.$filename, 'files');
+        $response = $this->decode($this->request('POST'));
+
+        $newRequest = Mage::getModel('capita_ti/request');
+        $newRequest
+            ->setSourceLanguage($sourceLanguage)
+            ->setDestLanguage($destLanguage)
+            ->setProductAttributes($productAttributes)
+            ->setProductIds($productIds)
+            ->addData($response)
+            ->addLocalDocument('export'.DS.$filename);
+        return $newRequest->save();
     }
 }

@@ -6,6 +6,7 @@
  * @method string getDestLanguage()
  * @method string getProductAttributes()
  * @method string getSourceLanguage()
+ * @method Capita_TI_Model_Request_Document[] getDocuments()
  * @method Capita_TI_Model_Request setProductAttributes(string[])
  * @method Capita_TI_Model_Request setProductIds(int[])
  * @method Capita_TI_Model_Request setSourceLanguage(string)
@@ -16,6 +17,17 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
     protected function _construct()
     {
         $this->_init('capita_ti/request');
+    }
+
+    protected function _initOldFieldsMap()
+    {
+        $this->_oldFieldsMap = array(
+            'RequestId' => 'remote_id',
+            'RequestNo' => 'remote_no',
+            'RequestStatus' => 'status',
+            'Documents' => 'documents'
+        );
+        return $this;
     }
 
     public function getSourceLanguageName()
@@ -54,5 +66,37 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
     public function getStatusLabel()
     {
         return Mage::getSingleton('capita_ti/source_status')->getOptionLabel($this->getStatus());
+    }
+
+    /**
+     * Matches local filename to remote filename intelligently
+     * 
+     * If names are too dissimilar then a consistent order is
+     * assumed and next available document is used.
+     * 
+     * @param string $filename
+     */
+    public function addLocalDocument($filename)
+    {
+        $documents = $this->getDocuments();
+        foreach ($documents as &$document) {
+            if ((basename($filename) == @$document['DocumentName']) || (basename($filename) == @$document['remote_name'])) {
+                $document['local_name'] = $filename;
+                $this->setDocuments($documents);
+                return $this;
+            }
+        }
+
+        // not found yet
+        foreach ($documents as &$document) {
+            if (!@$document['local_name']) {
+                $document['local_name'] = $filename;
+                $this->setDocuments($documents);
+                return $this;
+            }
+        }
+
+        // nothing to change
+        return $this;
     }
 }

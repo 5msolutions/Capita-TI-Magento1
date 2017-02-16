@@ -36,8 +36,8 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     {
         /* @var $requests Capita_TI_Model_Api_Requests */
         $requests = Mage::getModel('capita_ti/api_requests');
-        $filename = $requests->saveNewRequest($this->getRequest());
-        $this->_getSession()->addSuccess($filename.' was saved!');
+        $request = $requests->saveNewRequest($this->getRequest());
+        $this->_getSession()->addSuccess($this->__('Request "%s" has been started', $request->getRemoteNo()));
         $this->_redirect('*/*');
     }
 
@@ -47,15 +47,14 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
             $requestId = (int) $this->getRequest()->getParam('id');
             $request = Mage::getModel('capita_ti/request')->load($requestId);
             if ($request->isObjectNew()) {
-                throw new Mage_Adminhtml_Exception(
-                    Mage::helper('capita_ti')->__('Request "%d" is unavailable', $requestId));
+                throw new Mage_Adminhtml_Exception($this->__('Request "%d" is unavailable', $requestId));
             }
             Mage::register('capita_request', $request);
     
             $this->loadLayout();
             $this->_checkConnection();
             $this->_title($this->__('Capita Translations'))
-                ->_title($this->__('Request #%s', $request->getRemoteNo()))
+                ->_title($this->__('Request "%s"', $request->getRemoteNo()))
                 ->_setActiveMenu(self::MENU_PATH);
             $this->renderLayout();
         }
