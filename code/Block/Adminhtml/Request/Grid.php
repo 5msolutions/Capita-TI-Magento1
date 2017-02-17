@@ -22,10 +22,9 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 
     protected function _prepareColumns()
     {
-		$this->addColumn('request_id', array(
-			'index' => 'request_id',
-			'header' => $this->__('ID'),
-		    'type' => 'number',
+		$this->addColumn('remote_no', array(
+			'index' => 'remote_no',
+			'header' => $this->__('Request No.'),
 			'width' => '100px'
 		));
 		$this->addColumn('dest_language', array(
