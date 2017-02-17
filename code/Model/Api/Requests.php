@@ -19,11 +19,12 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
     }
 
     /**
+     * Writes entities to a file, uploads it to API, and returns an object which describes it.
      * 
      * @param Zend_Controller_Request_Abstract $input
      * @throws Mage_Adminhtml_Exception
      * @throws Zend_Http_Exception
-     * @return string
+     * @return Capita_TI_Model_Request
      */
     public function saveNewRequest(Zend_Controller_Request_Abstract $input)
     {
@@ -72,5 +73,29 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             ->addData($response)
             ->addLocalDocument('export'.DS.$filename);
         return $newRequest->save();
+    }
+
+    /**
+     * Retrieve latest request info from remote
+     * 
+     * If there are several updates to process it helps to set keepalive on this client.
+     * 
+     * @param Capita_TI_Model_Request $request
+     */
+    public function updateRequest(Capita_TI_Model_Request $request)
+    {
+        $path = 'request/'.urlencode($request->getRemoteId());
+        $this->setUri($this->getEndpoint($path));
+        $response = $this->decode($this->request('GET'));
+        // downloads might be empty
+        $downloads = $request->updateStatus($response);
+        /* @var $document Capita_TI_Model_Request_Document */
+        foreach ($downloads as $document) {
+            $uri = $this->getEndpoint('document/'.$document->getRemoteId());
+            $this->setUri($uri)
+                ->setStream($document->getLocalName())
+                ->request('GET');
+        }
+        $request->save();
     }
 }

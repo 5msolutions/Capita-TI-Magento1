@@ -9,7 +9,7 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
         $this->setDefaultSort('created_at');
         $this->setDefaultDir('DESC');
 
-        $this->setId('request_id');
+        $this->setId('request');
         $this->setUseAjax(true);
     }
 
@@ -51,10 +51,34 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 			'header' => $this->__('Status'),
 		    'type' => 'options',
 		    'options' => Mage::getSingleton('capita_ti/source_status')->getOptions(),
-			'width' => '100px'
+			'width' => '103px' // why 103? it aligns with the refresh button directly above
 		));
 
 		return parent::_prepareColumns();
+    }
+
+    protected function _prepareLayout()
+    {
+        $this->setChild('refresh_button',
+            $this->getLayout()->createBlock('adminhtml/widget_button')
+            ->setData(array(
+                'label'     => $this->__('Refresh Status'),
+                'onclick'   => $this->getJsObjectName().'.refreshStatus()'
+            ))
+        );
+        $this->setAdditionalJavaScript('
+            varienGrid.prototype.refreshStatus = function() {
+                this.reload(this._addVarToUrl(this.url, "refresh", "status"));
+            }
+        ');
+        return parent::_prepareLayout();
+    }
+
+    public function getMainButtonsHtml()
+    {
+        $html = parent::getMainButtonsHtml();
+        $html .= $this->getChildHtml('refresh_button');
+        return $html;
     }
 
     public function filterLanguages(Capita_TI_Model_Resource_Request_Collection $collection, Mage_Adminhtml_Block_Widget_Grid_Column $column)

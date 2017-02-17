@@ -40,6 +40,10 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
             'label' => $this->__('Submission Date'),
             'value' => Mage::app()->getLocale()->date($request->getCreatedAt())
         ));
+        $general->addField('updated_at', 'label', array(
+            'label' => $this->__('Last Updated'),
+            'value' => Mage::app()->getLocale()->date($request->getUpdatedAt())
+        ));
         return $general;
     }
 

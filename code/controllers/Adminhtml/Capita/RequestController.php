@@ -5,6 +5,34 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
 
     const MENU_PATH = 'system/capita_request';
 
+    public function preDispatch()
+    {
+        parent::preDispatch();
+
+        // might be called on any page, even by AJAX
+        // can be used to refresh all or just one
+        if ($this->getRequest()->getParam('refresh') == 'status') {
+            $id = $this->getRequest()->getParam('id');
+            /* @var $client Capita_TI_Model_Api_Requests */
+            $client = Mage::getModel('capita_ti/api_requests', array(
+                'keepalive' => true
+            ));
+            if ($id) {
+                $request = Mage::getModel('capita_ti/request')->load($id);
+                $client->updateRequest($request);
+            }
+            else {
+                $requests = Mage::getResourceModel('capita_ti/request_collection');
+                $requests->addIncompleteFilter();
+                foreach ($requests as $request) {
+                    $client->updateRequest($request);
+                }
+            }
+        }
+
+        return $this;
+    }
+
     public function indexAction()
     {
         $this->loadLayout();

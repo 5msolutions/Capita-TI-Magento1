@@ -99,4 +99,36 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
         // nothing to change
         return $this;
     }
+
+    /**
+     * What to do when a status changes?
+     * 
+     * It might mean downloading some files and importing them.
+     * 
+     * @param array $info Response decoded from API
+     * @param Capita_TI_Model_Request_Document List of remote documents to download
+     */
+    public function updateStatus($info)
+    {
+        $downloads = array();
+
+        if (($this->getStatus != 'completed') && (@$info['RequestStatus'] == 'completed')) {
+            // only care about nested arrays right now
+            $documents = call_user_func_array('array_merge_recursive', @$info['Documents']);
+            $finalDocuments = (array) @$documents['FinalDocuments'];
+
+            foreach ($finalDocuments as $document) {
+                $newdoc = Mage::getModel('capita_ti/request_document', $document);
+                $filename = 'import'.DS.basename($newdoc->getRemoteName());
+                $varDir = Mage::getConfig()->getVarDir().DS;
+                $newdoc->setLocalName($filename);
+                $downloads[] = $newdoc;
+            }
+
+            $documents = $this->getDocuments();
+            $this->setDocuments(array_merge($documents, $downloads));
+        }
+        $this->setStatus(@$info['RequestStatus']);
+        return $downloads;
+    }
 }
