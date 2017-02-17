@@ -13,8 +13,14 @@ class Capita_TI_Model_Xliff_Writer
      * @param string $group
      * @param string[] $attributes
      */
-    public function output($uri, $entities, $group = null, $attributes = array())
+    public function output($uri, $entities, $group = null, $attributes = array(), $options = array())
     {
+        $options = array_merge(array(
+            'original' => 'n/a',
+            'source_language' => 'en',
+            'datatype' => 'database'
+        ), $options);
+
         $xml = new XMLWriter();
         $xml->openUri($uri);
         $xml->startDocument();
@@ -22,9 +28,9 @@ class Capita_TI_Model_Xliff_Writer
         $xml->writeAttribute('version', '1.2');
         $xml->writeAttribute('xmlns', self::XML_NAMESPACE);
         $xml->startElement('file');
-        $xml->writeAttribute('original', '');
-        $xml->writeAttribute('source-language', 'en');
-        $xml->writeAttribute('datatype', 'database');
+        $xml->writeAttribute('original', $options['original']);
+        $xml->writeAttribute('source-language', strtr($options['source_language'], '_', '-'));
+        $xml->writeAttribute('datatype', $options['datatype']);
         $xml->startElement('body');
 
         if ($group) {
@@ -57,6 +63,9 @@ class Capita_TI_Model_Xliff_Writer
                     $xml->startElement('source');
                     $xml->text($source);
                     $xml->endElement(); // source
+                    $xml->startElement('target');
+                    $xml->text($source); // a deliberate duplicate
+                    $xml->endElement(); // target
                     $xml->endElement(); // trans-unit
                 }
                 $xml->endElement(); // group

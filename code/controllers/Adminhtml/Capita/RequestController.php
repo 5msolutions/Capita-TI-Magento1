@@ -36,7 +36,10 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     {
         try {
             /* @var $requests Capita_TI_Model_Api_Requests */
-            $requests = Mage::getModel('capita_ti/api_requests');
+            $requests = Mage::getModel('capita_ti/api_requests', array(
+                // enable following line to test without submitting to real API
+//                 'adapter' => Mage::getModel('capita_ti/api_adapter_samplePostRequest')
+            ));
             $request = $requests->saveNewRequest($this->getRequest());
             $this->_getSession()->unsCapitaProductIds();
             $this->_getSession()->addSuccess($this->__('Request "%s" has been started', $request->getRemoteNo()));

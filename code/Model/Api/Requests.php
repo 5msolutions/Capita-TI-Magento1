@@ -57,7 +57,9 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
 
         /* @var $output Capita_TI_Model_Xliff_Writer */
         $output = Mage::getModel('capita_ti/xliff_writer');
-        $output->output($varDir.$filename, $products, Mage_Catalog_Model_Product::ENTITY, $productAttributes);
+        $output->output($varDir.$filename, $products, Mage_Catalog_Model_Product::ENTITY, $productAttributes, array(
+            'source_language' => $sourceLanguage
+        ));
         $this->setFileUpload($varDir.$filename, 'files');
         $response = $this->decode($this->request('POST'));
 
