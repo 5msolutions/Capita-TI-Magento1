@@ -23,6 +23,7 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
         $form->setUseContainer(true);
         $locales = Mage::helper('capita_ti')->getStoreLocalesOptions();
+        $defaultLocale = Mage::app()->getDefaultStoreView()->getConfig('general/locale/code');
 
         $general = $form->addFieldset('general', array(
             'legend' => $this->__('General')
@@ -31,7 +32,8 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             'name' => 'source_language',
             'label' => $this->__('Source Language'),
             'required' => true,
-            'values' => $locales
+            'values' => $locales,
+            'value' => $defaultLocale
         ));
         $general->addField('dest_language', 'multiselect', array(
             'name' => 'dest_language',
@@ -44,7 +46,7 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
                 $$("#dest_language option").invoke("writeAttribute","disabled",null);
                 $$("#dest_language option[value="+$F(this)+"]").invoke("writeAttribute","disabled","disabled");
             });
-            $$("#dest_language option[value='.@$locales[0]['value'].']").invoke("writeAttribute","disabled","disabled");
+            $$("#dest_language option[value='.$defaultLocale.']").invoke("writeAttribute","disabled","disabled");
             </script>');
 
         $products = $form->addFieldset('products', array(
