@@ -54,7 +54,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         if (!$varDir) {
             throw new Mage_Adminhtml_Exception(Mage::helper('capita_ti')->__('Cannot write to "%s"', $varDir));
         }
-        $filename = sprintf('capita-ti-%s.mgxliff', $nextWeek->toString('y-MM-d-HH-mm-ss'));
+        $filename = sprintf('capita-ti-%s.mgxliff', Zend_Date::now()->toString('y-MM-d-HH-mm-ss'));
 
         /* @var $output Capita_TI_Model_Xliff_Writer */
         $output = Mage::getModel('capita_ti/xliff_writer');
