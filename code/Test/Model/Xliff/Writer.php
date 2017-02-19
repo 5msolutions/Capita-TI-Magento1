@@ -47,20 +47,13 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
      */
     public function xmlHasBasicStructure()
     {
-        $this->writer->output($this->filename, array());
+        $collection = new Varien_Data_Collection();
+        $collection->addItem(new Varien_Object());
+        $this->writer->addCollection('foo', $collection);
+        $this->writer->output($this->filename);
         $this->assertXPathMatches(1, 'count(/x:xliff)', 'Document starts with "xliff" element');
-        $this->assertXPathMatches(1, 'count(/x:xliff/x:file)', 'Document has one "file" element');
+        $this->assertXPathMatches(1, 'count(/x:xliff/x:file[@original="foo/0"])', 'Document has one "file" element');
         $this->assertXPathMatches(1, 'count(/x:xliff/x:file/x:body)', 'Document has one "body" element');
-    }
-
-    /**
-     * @test
-     */
-    public function xmlCanHaveGroups()
-    {
-        $this->writer->output($this->filename, array(), 'genus');
-        $this->assertXPathMatches(1, 'count(//x:group)', 'One group was specified');
-        $this->assertXPathMatches('genus', 'string(//x:group/@id)', '"genus" is the latin for group');
     }
 
     /**
@@ -68,12 +61,12 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
      */
     public function attributesAreIncluded()
     {
-        $this->writer->output($this->filename, array(
-            array(
+        $cupboard = new Varien_Data_Collection();
+        $cupboard->addItem(new Varien_Object(array(
                 'type'=>'A cup',
-            )
-        ));
-        $this->assertXPathMatches(1, 'count(//x:group)', 'Entities/models are represented as groups');
+            )));
+        $this->writer->addCollection('cupboard', $cupboard);
+        $this->writer->output($this->filename);
         $this->assertXPathMatches('A cup', 'string(//x:trans-unit[@id="type"]/x:source)', 'Trans unit IDs are attribute key');
     }
 
@@ -82,13 +75,14 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
      */
     public function attributesAreExcluded()
     {
-        $this->writer->output($this->filename, array(
-            array(
+        $cupboard = new Varien_Data_Collection();
+        $cupboard->addItem(new Varien_Object(array(
                 'name'=>'World\'s best dad mug',
                 'type'=>'A cup',
                 'description'=>'A modern classic'
-            )
-        ), null, array('type', 'description', 'imaginary'));
+            )));
+        $this->writer->addCollection('cupboard', $cupboard, array('type', 'description', 'imaginary'));
+        $this->writer->output($this->filename);
         $this->assertXPathMatches(2, 'count(//x:source)', 'Attributes are filterable');
         $this->assertXPathMatches('A cup', 'string(//x:trans-unit[@id="type"]/x:source)');
         $this->assertXPathMatches('A modern classic', 'string(//x:trans-unit[@id="description"]/x:source)');
