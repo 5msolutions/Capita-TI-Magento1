@@ -4,33 +4,24 @@ class Capita_TI_Test_Model_Api_Requests extends EcomDev_PHPUnit_Test_Case
 {
 
     /**
-     * @var Zend_Http_Client_Adapter_Test
-     */
-    protected $adapter;
-
-    /**
      * @var Capita_TI_Model_Api_Requests
      */
     protected $subject;
 
     protected function setUp()
     {
-        $this->adapter = new Zend_Http_Client_Adapter_Test();
-        $this->adapter->setResponse("HTTP/1.1 200 OK\r\n".
-            "Content-Type: application/json\r\n".
-            "\r\n".
-            '{}'
-        );
         $this->subject = Mage::getModel('capita_ti/api_requests', array(
-            'adapter' => $this->adapter
+            'adapter' => Mage::getModel('capita_ti/api_adapter_samplePostRequest')
         ));
     }
 
     /**
-     * Realistic data
+     * Data copied from API spec.
      * 
+     * @see https://api.capitatranslationinterpreting.com/
+     * @test
      */
-    public function extractLanguagesFromFeed()
+    public function newRequestReturnsStatusInfo()
     {
         $case = new Zend_Controller_Request_HttpTestCase();
         $case->setMethod('POST');
@@ -39,9 +30,12 @@ class Capita_TI_Test_Model_Api_Requests extends EcomDev_PHPUnit_Test_Case
         $case->setParam('products_ids', '1');
         $case->setParam('product_attributes', array('name', 'description'));
 
-        $request = $this->subject->saveNewRequest($case);
+        $request = $this->subject->startNewRequest($case);
         $this->assertInstanceOf('Capita_TI_Model_Request', $request);
-        $this->assertTrue($request->hasData(), 'Request model has been populated');
-        $this->assertFalse($request->hasDataChanges(), 'Resource model is not different from database');
+        $this->assertTrue($request->hasData() && $request->hasDataChanges(), 'Request model has been populated');
+        $this->assertEquals('1250936094-13321', $request->getRemoteId());
+        $this->assertEquals('CTI-160302-1', $request->getRemoteNo());
+        $this->assertEquals('onHold', $request->getStatus());
+        $this->assertCount(2, $request->getDocuments());
     }
 }

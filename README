@@ -1,0 +1,53 @@
+Overview
+--------
+
+The purpose of Capita_TI is to export entity text data to a remote server -
+https://api.capitatranslationinterpreting.com/ - and wait for translations.
+Each 'request' is polled until it's status changes and there are new documents
+to download. These must then be imported to the same entities from whence they
+came (products, categories, etc.).
+
+The list of languages retrieved from the API might be user-specific (oneday)
+and are cached with a short time. Almost every related page uses this list
+so the API credentials get regularly tested, expired accounts will get
+noticed pretty quickly.
+
+XLIFF format (http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html) was
+chosen for ex/imports. It supports marking non-translateable parts within text,
+which is perfect for those awkward HTML tags.
+
+Like any considerate design this can have wider applications.
+XLIFF is an open standard and another translator service need only change the
+descendents of Zend_Http_Client in "code/Model/Api/".
+
+
+Test Driven Development
+-----------------------
+
+Unit testing is performed with https://github.com/EcomDev/EcomDev_PHPUnit/
+EComDev is somewhat outdated and relies on PHP~5 and PhpUnit~4.
+To test it is recommended to first install a copy of Magento~1.7 then use
+Composer to supply the other requirements, remember to specify versions:
+
+$ composer require phpunit/phpunit:~4
+
+EComDev_PhpUnit itself will need a blank database,
+follow the instructions from the above link.
+
+
+Installation
+------------
+
+Optimised for https://github.com/colinmollenhour/modman
+The usual Magento procedure then follows, make sure caches are cleared
+then visit any page and the auto-update scripts will trigger.
+
+
+Distribution
+------------
+
+I've been using https://github.com/clockworkgeek/MagentoTagToConnect
+to generate uploadable packages but that is not required.
+The old way (System > Magento Connect > Package Extensions) still works.
+The finished package then goes to the Connect Manager on a site or the
+Connect market instead.

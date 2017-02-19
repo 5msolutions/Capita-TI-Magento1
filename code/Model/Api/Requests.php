@@ -26,7 +26,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
      * @throws Zend_Http_Exception
      * @return Capita_TI_Model_Request
      */
-    public function saveNewRequest(Zend_Controller_Request_Abstract $input)
+    public function startNewRequest(Zend_Controller_Request_Abstract $input)
     {
         $sourceLanguage = $input->getParam('source_language');
         $destLanguage = implode(',', $input->getParam('dest_language'));
@@ -72,7 +72,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             ->setProductIds($productIds)
             ->addData($response)
             ->addLocalDocument('export'.DS.$filename);
-        return $newRequest->save();
+        return $newRequest;
     }
 
     /**
