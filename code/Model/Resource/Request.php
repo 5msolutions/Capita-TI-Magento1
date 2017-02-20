@@ -63,6 +63,17 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         }
     }
 
+    protected function _afterDelete(Mage_Core_Model_Abstract $request)
+    {
+        foreach ($request->getDocuments() as $document) {
+            if (is_array($document)) {
+                $document = Mage::getModel('capita_ti/request_document')
+                    ->setData($document);
+            }
+            $document->delete();
+        }
+    }
+
     protected function _saveDocuments(Capita_TI_Model_Request $request)
     {
         $documents = $request->getDocuments();

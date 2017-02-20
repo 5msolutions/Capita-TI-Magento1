@@ -37,5 +37,6 @@ class Capita_TI_Test_Model_Api_Requests extends EcomDev_PHPUnit_Test_Case
         $this->assertEquals('CTI-160302-1', $request->getRemoteNo());
         $this->assertEquals('onHold', $request->getStatus());
         $this->assertCount(2, $request->getDocuments());
+        $request->delete();
     }
 }

@@ -13,5 +13,15 @@ class Capita_TI_Model_Resource_Request_Document extends Mage_Core_Model_Resource
         if ($document->hasLanguage()) {
             $document->setLanguage(strtr($document->getLanguage(), '-', '_'));
         }
+        return parent::_beforeSave($document);
+    }
+
+    protected function _afterDelete(Mage_Core_Model_Abstract $document)
+    {
+        if ($document->getLocalName()) {
+            $filename = Mage::getConfig()->getVarDir().DS.$document->getLocalName();
+            is_writable($filename) && unlink($filename);
+        }
+        return parent::_afterDelete($document);
     }
 }

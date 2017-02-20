@@ -120,7 +120,8 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
             foreach ($finalDocuments as $document) {
                 $newdoc = Mage::getModel('capita_ti/request_document', $document);
                 $filename = 'import'.DS.basename($newdoc->getRemoteName());
-                $varDir = Mage::getConfig()->getVarDir().DS;
+                // ensure directory exists
+                Mage::getConfig()->getVarDir('import');
                 $newdoc->setLocalName($filename);
                 $downloads[] = $newdoc;
             }
