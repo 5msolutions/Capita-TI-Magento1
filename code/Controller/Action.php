@@ -20,6 +20,7 @@ class Capita_TI_Controller_Action extends Mage_Adminhtml_Controller_Action
             catch (Zend_Http_Exception $e) {
                 Mage::logException($e);
                 $this->getLayout()->getMessagesBlock()->addError($this->__('There was a problem connecting to the server: %s', $e->getMessage()));
+                Mage::getSingleton('capita_ti/api_languages')->setLocalLanguages();
             }
         }
     }

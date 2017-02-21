@@ -59,6 +59,20 @@ class Capita_TI_Model_Api_Languages extends Capita_TI_Model_Api_Abstract
         return array();
     }
 
+    /**
+     * Override list of languages with local fixed list. Useful for fallbacks.
+     * 
+     * @return Capita_TI_Model_Api_Languages
+     */
+    public function setLocalLanguages()
+    {
+        $this->languages = array();
+        foreach (Mage::app()->getLocale()->getOptionLocales() as $locale) {
+            $this->languages[@$locale['value']] = @$locale['label'];
+        }
+        return $this;
+    }
+
     public function getLanguagesInUse()
     {
         $codes = array();
