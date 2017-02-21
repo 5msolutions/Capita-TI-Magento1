@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Capita_TI>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
         </Capita_TI>
     </modules>
 
@@ -48,6 +48,19 @@
             </capita_ti_setup>
         </resources>
     </global>
+
+    <crontab>
+        <jobs>
+            <capita_ti_import>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>capita_ti/observer::cronImport</model>
+                </run>
+            </capita_ti_import>
+        </jobs>
+    </crontab>
 
     <admin>
         <routers>

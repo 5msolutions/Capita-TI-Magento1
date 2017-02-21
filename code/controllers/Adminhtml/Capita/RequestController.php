@@ -18,10 +18,14 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
                 'keepalive' => true
             ));
             if ($id) {
+                /* @var $request Capita_TI_Model_Request */
                 $request = Mage::getModel('capita_ti/request')->load($id);
-                $client->updateRequest($request);
+                if ($request->canUpdate()) {
+                    $client->updateRequest($request);
+                }
             }
             else {
+                /* @var $requests Capita_TI_Model_Resource_Request_Collection */
                 $requests = Mage::getResourceModel('capita_ti/request_collection');
                 $requests->addIncompleteFilter();
                 foreach ($requests as $request) {

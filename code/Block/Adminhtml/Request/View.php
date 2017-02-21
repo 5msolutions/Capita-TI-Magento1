@@ -19,7 +19,8 @@ class Capita_TI_Block_Adminhtml_Request_View extends Mage_Adminhtml_Block_Widget
         $this->_addButton('refresh', array(
             'label' => $this->__('Refresh Status'),
             'onclick' => "setLocation('{$refreshUrl}')",
-            'class' => 'save'
+            'class' => 'save',
+            'disabled' => !$this->_getRequest()->canUpdate()
         ));
     }
 

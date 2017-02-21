@@ -95,7 +95,11 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             $this->setUri($uri)
                 ->setStream($document->getLocalName())
                 ->request('GET');
+            $document->setStatus('importing');
+            $request->setStatus('importing');
         }
+
+        // also saves all documents
         $request->save();
     }
 }

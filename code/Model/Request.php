@@ -69,6 +69,16 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
     }
 
     /**
+     * True if there is more to be learned from remote API
+     * 
+     * @return boolean
+     */
+    public function canUpdate()
+    {
+        return $this->getRemoteId() && in_array($this->getStatus(), array('onHold', 'inProgress'));
+    }
+
+    /**
      * Matches local filename to remote filename intelligently
      * 
      * If names are too dissimilar then a consistent order is
@@ -110,12 +120,22 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
      */
     public function updateStatus($info)
     {
-        $downloads = array();
+        $newStatus = @$info['RequestStatus'];
+        $documents = $this->getDocuments();
+        foreach ($documents as &$document) {
+            if ($document instanceof Capita_TI_Model_Request_Document) {
+                $document->setStatus($newStatus);
+            }
+            else {
+                $document['status'] = $newStatus;
+            }
+        }
 
-        if (($this->getStatus != 'completed') && (@$info['RequestStatus'] == 'completed')) {
+        $downloads = array();
+        if (($this->getStatus != 'completed') && ($newStatus == 'completed')) {
             // only care about nested arrays right now
-            $documents = call_user_func_array('array_merge_recursive', @$info['Documents']);
-            $finalDocuments = (array) @$documents['FinalDocuments'];
+            $remoteDocuments = call_user_func_array('array_merge_recursive', @$info['Documents']);
+            $finalDocuments = (array) @$remoteDocuments['FinalDocuments'];
 
             foreach ($finalDocuments as $document) {
                 $newdoc = Mage::getModel('capita_ti/request_document', $document);
@@ -125,11 +145,10 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
                 $newdoc->setLocalName($filename);
                 $downloads[] = $newdoc;
             }
-
-            $documents = $this->getDocuments();
-            $this->setDocuments(array_merge($documents, $downloads));
         }
-        $this->setStatus(@$info['RequestStatus']);
+
+        $this->setDocuments(array_merge($documents, $downloads));
+        $this->setStatus($newStatus);
         return $downloads;
     }
 }

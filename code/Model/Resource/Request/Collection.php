@@ -46,7 +46,7 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
      */
     public function addIncompleteFilter()
     {
-        $this->addFieldToFilter('status', array('neq' => 'completed'));
+        $this->addFieldToFilter('status', array('nin' => array('completed', 'importing')));
         return $this;
     }
 }

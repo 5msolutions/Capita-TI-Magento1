@@ -82,7 +82,8 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             if (is_array($document)) {
                 $document = Mage::getModel('capita_ti/request_document')
                     ->setData($document)
-                    ->setRequestId($request->getId());
+                    ->setRequestId($request->getId())
+                    ->setStatus($request->getStatus());
             }
             $document->save();
         }
