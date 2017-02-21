@@ -35,7 +35,7 @@ class Capita_TI_Model_Xliff_Reader
         $xml->open($uri) or $this->__('Could not open "%s"', $uri);
 
         $xml->read() or $this->__('Could not read root element');
-        $xml->name == 'xliff' or $this->__('Root element is not XLIFF');
+        $xml->name == 'xliff' or $this->__('Expected "%s" element but got "%s"', 'xliff', $xml->name);
         $version = $xml->getAttribute('version');
         $version == '1.2' or $this->__('XLIFF version is "%s" and needs to be "1.2"', $version);
 
