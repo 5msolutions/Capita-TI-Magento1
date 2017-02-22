@@ -18,9 +18,18 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         return (array) $this->getSession()->getCapitaProductIds();
     }
 
+    protected function getCategoryIds()
+    {
+        return (array) $this->getSession()->getCapitaCategoryIds();
+    }
+
     protected function _prepareForm()
     {
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
+        $form = new Varien_Data_Form(array(
+            'id' => 'edit_form',
+            'action' => $this->getData('action'),
+            'method' => 'post'
+        ));
         $form->setUseContainer(true);
         $locales = Mage::helper('capita_ti')->getStoreLocalesOptions();
         $defaultLocale = Mage::app()->getDefaultStoreView()->getConfig('general/locale/code');
@@ -49,19 +58,31 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             $$("#dest_language option[value='.$defaultLocale.']").invoke("writeAttribute","disabled","disabled");
             </script>');
 
+        if ($this->getParentBlock()->getEnableProducts()) {
+            $this->_addProductsFieldset($form);
+        }
+
+        if ($this->getParentBlock()->getEnableCategories()) {
+            $this->_addCategoriesFieldset($form);
+        }
+
+        $this->setForm($form);
+        return parent::_prepareForm();
+    }
+
+    protected function _addProductsFieldset(Varien_Data_Form $form)
+    {
         $products = $form->addFieldset('products', array(
             'legend' => $this->__('Products')
         ));
-        if ($this->getProductIds()) {
-            $products->addField('product_ids', 'hidden', array(
-                'name' => 'product_ids',
-                'value' => implode(',', $this->getProductIds())
-            ));
-            $products->addField('product_count', 'label', array(
-                'label' => $this->__('Number of products selected'),
-                'value' => count($this->getProductIds())
-            ));
-        }
+        $products->addField('product_ids', 'hidden', array(
+            'name' => 'product_ids',
+            'value' => implode(',', $this->getProductIds())
+        ));
+        $products->addField('product_count', 'label', array(
+            'label' => $this->__('Number of products selected'),
+            'value' => count($this->getProductIds())
+        ));
         $products->addField('product_attributes', 'multiselect', array(
             'name' => 'product_attributes',
             'label' => $this->__('Product Attributes'),
@@ -72,9 +93,28 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             'values' => Mage::getSingleton('capita_ti/source_product_attributes')->toOptionArray(),
             'value' => Mage::getStoreConfig('capita_ti/products/attributes')
         ));
-
-        $this->setForm($form);
-        return parent::_prepareForm();
     }
 
+    protected function _addCategoriesFieldset(Varien_Data_Form $form)
+    {
+        $categories = $form->addFieldset('categories', array(
+            'legend' => $this->__('Categories')
+        ));
+        $categories->addType('categories', Mage::getConfig()->getBlockClassName('capita_ti/adminhtml_categories'));
+        $categories->addField('category_ids', 'categories', array(
+            'name' => 'category_ids',
+            'label' => $this->__('Categories'),
+            'value' => implode(',', $this->getCategoryIds())
+        ));
+        $categories->addField('category_attributes', 'multiselect', array(
+            'name' => 'category_attributes',
+            'label' => $this->__('Category Attributes'),
+            'note' => $this->__(
+                'The default selection can be changed in <a href="%s">Configuration</a>.',
+                $this->getUrl('*/system_config/edit', array('section' => 'capita_ti'))),
+            'required' => true,
+            'values' => Mage::getSingleton('capita_ti/source_category_attributes')->toOptionArray(),
+            'value' => Mage::getStoreConfig('capita_ti/categories/attributes')
+        ));
+    }
 }

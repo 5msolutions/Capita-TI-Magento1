@@ -27,6 +27,7 @@ class Capita_TI_Model_Observer
         /* @var $reader Capita_TI_Model_Xliff_Reader */
         $reader = Mage::getSingleton('capita_ti/xliff_reader');
         $reader->addType(Mage::getSingleton('capita_ti/xliff_import_product'));
+        $reader->addType(Mage::getSingleton('capita_ti/xliff_import_category'));
         $varDir = Mage::getConfig()->getVarDir() . DS;
 
         foreach ($documents as $document) {

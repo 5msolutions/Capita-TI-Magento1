@@ -21,6 +21,12 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         $select->from($this->getTable('capita_ti/product'), 'product_id')
             ->where('request_id=?', $request->getId());
         $request->setProductIds($adapter->fetchCol($select));
+
+        // do the same for categories
+        $select = $adapter->select();
+        $select->from($this->getTable('capita_ti/category'), 'category_id')
+            ->where('request_id=?', $request->getId());
+        $request->setCategoryIds($adapter->fetchCol($select));
     }
 
     protected function _beforeSave(Mage_Core_Model_Abstract $request)
@@ -37,11 +43,11 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             count($request->getProductIds())
         );
 
-        if (is_array($request->getProductAttributes())) {
-            $request->setProductAttributes(
-                implode(',', $request->getProductAttributes())
-            );
-        }
+        $request->setCategoryCount(
+            is_string($request->getCategoryIds()) ?
+            substr_count($request->getCategoryIds(), ',') + 1 :
+            count($request->getCategoryIds())
+        );
 
         $request->setUpdatedAt($this->formatDate(true));
 
@@ -54,12 +60,16 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             $this->_saveDocuments($request);
         }
 
-        if ($request->dataHasChangedFor('product_attributes')) {
-            $this->_saveProductAttributes($request);
+        if ($request->dataHasChangedFor('product_attributes') || $request->dataHasChangedFor('category_attributes')) {
+            $this->_saveAttributes($request);
         }
 
         if ($request->dataHasChangedFor('product_ids')) {
             $this->_saveProducts($request);
+        }
+
+        if ($request->dataHasChangedFor('category_ids')) {
+            $this->_saveCategories($request);
         }
     }
 
@@ -91,16 +101,21 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             ->setOrigData('documents', $documents);
     }
 
-    protected function _saveProductAttributes(Capita_TI_Model_Request $request)
+    protected function _saveAttributes(Capita_TI_Model_Request $request)
     {
         $attrTable = $this->getTable('capita_ti/attribute');
-        $attrCodes = $request->getProductAttributes();
-        if (!is_array($attrCodes)) {
-            $attrCodes = explode(',', (string) $attrCodes);
-        }
-        /* @var $attributes Mage_Catalog_Model_Resource_Product_Attribute_Collection */
-        $attributes = Mage::getResourceModel('catalog/product_attribute_collection');
-        $attributes->addFieldToFilter('main_table.attribute_code', array('in' => $attrCodes));
+        $productAttributes = $request->getProductAttributesArray();
+        $categoryAttributes = $request->getCategoryAttributesArray();
+        /* @var $eavConfig Mage_Eav_Model_Config */
+        $eavConfig = Mage::getSingleton('eav/config');
+        $productTypeId = $eavConfig->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getEntityTypeId();
+        $categoryTypeId = $eavConfig->getEntityType(Mage_Catalog_Model_Category::ENTITY)->getEntityTypeId();
+
+        /* @var $attributes Mage_Eav_Model_Resource_Entity_Attribute_Collection */
+        $attributes = Mage::getResourceModel('eav/entity_attribute_collection');
+        $attributes->getSelect()
+            ->where("(entity_type_id={$productTypeId}) AND (attribute_code IN (?))", $productAttributes)
+            ->orWhere("(entity_type_id={$categoryTypeId}) AND (attribute_code IN (?))", $categoryAttributes);
         $attrIds = $attributes->getColumnValues('attribute_id');
 
         $adapter = $this->_getWriteAdapter();
@@ -122,6 +137,7 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
 
         // mark field as unchanged
         $request->setOrigData('product_attributes', $request->getProductAttributes());
+        $request->setOrigData('category_attributes', $request->getCategoryAttributes());
     }
 
     protected function _saveProducts(Capita_TI_Model_Request $request)
@@ -148,5 +164,31 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         }
         $adapter->insertOnDuplicate($productTable, $insertData);
         $request->setOrigData('product_ids', $productIds);
+    }
+
+    protected function _saveCategories(Capita_TI_Model_Request $request)
+    {
+        $categoryTable = $this->getTable('capita_ti/category');
+        $categoryIds = $request->getCategoryIds();
+        if (!is_array($categoryIds)) {
+            $categoryIds = explode(',', (string) $categoryIds);
+        }
+
+        $adapter = $this->_getWriteAdapter();
+        $condition = sprintf(
+            '(%s) AND (%s)',
+            $adapter->prepareSqlCondition('request_id', $request->getId()),
+            $adapter->prepareSqlCondition('category_id', array('nin' => $categoryIds)));
+        $adapter->delete($categoryTable, $condition);
+
+        $insertData = array();
+        foreach ($categoryIds as $categoryId) {
+            $insertData[] = array(
+                'request_id' => $request->getId(),
+                'category_id' => $categoryId
+            );
+        }
+        $adapter->insertOnDuplicate($categoryTable, $insertData);
+        $request->setOrigData('category_ids', $categoryIds);
     }
 }

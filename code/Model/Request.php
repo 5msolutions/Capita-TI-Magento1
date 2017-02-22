@@ -4,10 +4,10 @@
  * @method int getProductCount()
  * @method int[] getProductIds()
  * @method string getDestLanguage()
+ * @method string getCategoryAttributes()
  * @method string getProductAttributes()
  * @method string getSourceLanguage()
  * @method Capita_TI_Model_Request_Document[] getDocuments()
- * @method Capita_TI_Model_Request setProductAttributes(string[])
  * @method Capita_TI_Model_Request setProductIds(int[])
  * @method Capita_TI_Model_Request setSourceLanguage(string)
  */
@@ -54,13 +54,94 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
         return $names;
     }
 
+    /**
+     * Converts from internal string to array of strings
+     * 
+     * @return string[]
+     */
+    public function getProductAttributesArray()
+    {
+        return explode(',', $this->getProductAttributes());
+    }
+
+    /**
+     * Converts attribute codes to frontend labels, separated by commas
+     * 
+     * @return string
+     */
     public function getProductAttributeNames()
     {
-        $codes = $this->getProductAttributes();
+        if ($this->hasProductAttributeNames()) {
+            return parent::getProductAttributeNames();
+        }
+
         /* @var $attributes Mage_Catalog_Model_Resource_Product_Attribute_Collection */
         $attributes = Mage::getResourceModel('catalog/product_attribute_collection');
-        $attributes->addFieldToFilter('attribute_code', array('in' => explode(',', $codes)));
-        return implode(', ', $attributes->getColumnValues('frontend_label'));
+        $attributes->addFieldToFilter('attribute_code', array('in' => $this->getProductAttributesArray()));
+        $names = implode(', ', $attributes->getColumnValues('frontend_label'));
+        $this->setProductAttributeNames($names);
+        return $names;
+    }
+
+    /**
+     * Either a comma-separated string or array of strings
+     * 
+     * @param mixed $attributeCodes
+     * @return Capita_TI_Model_Request
+     */
+    public function setProductAttributes($attributeCodes)
+    {
+        parent::setProductAttributes(
+            is_array($attributeCodes) ?
+            implode(',', $attributeCodes) :
+            (string) $attributeCodes);
+        $this->unsProductAttributeNames();
+        return $this;
+    }
+
+    /**
+     * Converts from internal string to array of strings
+     * 
+     * @return string[]
+     */
+    public function getCategoryAttributesArray()
+    {
+        return explode(',', $this->getCategoryAttributes());
+    }
+
+    /**
+     * Converts attribute codes to frontend labels, separated by commas
+     * 
+     * @return string
+     */
+    public function getCategoryAttributeNames()
+    {
+        if ($this->hasCategoryAttributeNames()) {
+            return parent::getCategoryAttributeNames();
+        }
+
+        /* @var $attributes Mage_Catalog_Model_Resource_Category_Attribute_Collection */
+        $attributes = Mage::getResourceModel('catalog/category_attribute_collection');
+        $attributes->addFieldToFilter('attribute_code', array('in' => $this->getCategoryAttributesArray()));
+        $names = implode(', ', $attributes->getColumnValues('frontend_label'));
+        $this->setCategoryAttributeNames($names);
+        return $names;
+    }
+
+    /**
+     * Either a comma-separated string or array of strings
+     * 
+     * @param mixed $attributeCodes
+     * @return Capita_TI_Model_Request
+     */
+    public function setCategoryAttributes($attributeCodes)
+    {
+        parent::setCategoryAttributes(
+            is_array($attributeCodes) ?
+            implode(',', $attributeCodes) :
+            (string) $attributeCodes);
+        $this->unsCategoryAttributeNames();
+        return $this;
     }
 
     public function getStatusLabel()

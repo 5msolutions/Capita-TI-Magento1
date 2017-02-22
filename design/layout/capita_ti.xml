@@ -7,8 +7,14 @@
     </adminhtml_capita_request_index>
 
     <adminhtml_capita_request_new>
+        <reference name="head">
+            <action method="setCanLoadExtJs"><flag>1</flag></action>
+        </reference>
         <reference name="content">
-            <block type="capita_ti/adminhtml_request_new" />
+            <block type="capita_ti/adminhtml_request_new" name="capita_ti_new_request">
+                <action method="setEnableProducts"><enable>1</enable></action>
+                <action method="setEnableCategories"><enable>1</enable></action>
+            </block>
         </reference>
     </adminhtml_capita_request_new>
 
@@ -20,7 +26,9 @@
 
     <adminhtml_catalog_product_translate>
         <reference name="content">
-            <block type="capita_ti/adminhtml_request_new" />
+            <block type="capita_ti/adminhtml_request_new" name="capita_ti_new_request">
+                <action method="setEnableProducts"><enable>1</enable></action>
+            </block>
         </reference>
     </adminhtml_catalog_product_translate>
 </layout>

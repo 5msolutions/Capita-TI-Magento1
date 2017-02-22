@@ -74,7 +74,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
             ));
             $request = $requests->startNewRequest($this->getRequest());
             $request->save();
-            $this->_getSession()->unsCapitaProductIds();
+            $this->_getSession()->unsCapitaProductIds()->unsCapitaCategoryIds();
             $this->_getSession()->addSuccess($this->__('Request "%s" has been started', $request->getRemoteNo()));
             $this->_redirect('*/*');
         }

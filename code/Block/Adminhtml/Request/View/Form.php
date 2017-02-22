@@ -15,6 +15,10 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
             $this->_addProductData($form, $request);
         }
 
+        if ($request->getCategoryCount()) {
+            $this->_addCategoryData($form, $request);
+        }
+
         $this->setForm($form);
         return parent::_prepareForm();
     }
@@ -62,5 +66,22 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
         ));
 
         return $products;
+    }
+
+    protected function _addCategoryData(Varien_Data_Form $form, Capita_TI_Model_Request $request)
+    {
+        $categories = $form->addFieldset('categories', array(
+            'legend' => $this->__('Categories')
+        ));
+        $categories->addField('category_count', 'label', array(
+            'label' => $this->__('Number of categories selected'),
+            'value' => $request->getCategoryCount()
+        ));
+        $categories->addField('category_attributes', 'label', array(
+            'label' => $this->__('Category Attributes'),
+            'value' => $request->getCategoryAttributeNames()
+        ));
+
+        return $categories;
     }
 }

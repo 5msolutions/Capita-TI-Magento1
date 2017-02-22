@@ -42,12 +42,31 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $this->setParameterPost('DeliveryDate', $nextWeek->toString('y-MM-d HH:mm:ss'));
 
         // now for the main content
-        $productIds = $input->getParam('product_ids');
+        $productIds = $input->getParam('product_ids', '');
+        $productIds = array_filter(array_unique(explode(',', $productIds)));
         $productAttributes = $input->getParam('product_attributes', array());
         /* @var $products Mage_Catalog_Model_Resource_Product_Collection */
         $products = Mage::getResourceModel('catalog/product_collection');
-        $products->addAttributeToFilter('entity_id', array('in' => explode(',', $productIds)));
+        $products->addIdFilter($productIds);
         $products->addAttributeToSelect($productAttributes);
+
+        $categoryIds = $input->getParam('category_ids', '');
+        $categoryIds = array_filter(array_unique(explode(',', $categoryIds)));
+        $categoryAttributes = $input->getParam('category_attributes', array());
+        /* @var $categories Mage_Catalog_Model_Resource_Category_Collection */
+        $categories = Mage::getResourceModel('catalog/category_collection');
+        $categories->addIdFilter($categoryIds);
+        $categories->addAttributeToSelect($categoryAttributes);
+
+        /* @var $newRequest Capita_TI_Model_Request */
+        $newRequest = Mage::getModel('capita_ti/request');
+        $newRequest
+            ->setSourceLanguage($sourceLanguage)
+            ->setDestLanguage($destLanguage)
+            ->setProductAttributes($productAttributes)
+            ->setProductIds($productIds)
+            ->setCategoryIds($categoryIds)
+            ->setCategoryAttributes($categoryAttributes);
 
         // limited to one file per upload for now
         $varDir = Mage::getConfig()->getVarDir('export') . DS;
@@ -58,18 +77,14 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
 
         /* @var $output Capita_TI_Model_Xliff_Writer */
         $output = Mage::getModel('capita_ti/xliff_writer');
-        $output->addCollection(Mage_Catalog_Model_Product::ENTITY, $products, $productAttributes);
+        $output->addCollection(Mage_Catalog_Model_Product::ENTITY, $products, $newRequest->getProductAttributesArray());
+        $output->addCollection(Mage_Catalog_Model_Category::ENTITY, $categories, $newRequest->getCategoryAttributesArray());
         $output->setSourceLanguage($sourceLanguage);
         $output->output($varDir.$filename);
         $this->setFileUpload($varDir.$filename, 'files');
         $response = $this->decode($this->request('POST'));
 
-        $newRequest = Mage::getModel('capita_ti/request');
         $newRequest
-            ->setSourceLanguage($sourceLanguage)
-            ->setDestLanguage($destLanguage)
-            ->setProductAttributes($productAttributes)
-            ->setProductIds($productIds)
             ->addData($response)
             ->addLocalDocument('export'.DS.$filename);
         return $newRequest;

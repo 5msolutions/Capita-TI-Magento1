@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Capita_TI>
-            <version>0.1.2</version>
+            <version>0.1.3</version>
         </Capita_TI>
     </modules>
 
@@ -31,6 +31,9 @@
                     <document>
                         <table>capita_ti_document</table>
                     </document>
+                    <category>
+                        <table>capita_ti_category</table>
+                    </category>
                     <product>
                         <table>capita_ti_product</table>
                     </product>
@@ -118,6 +121,9 @@
             <products>
                 <attributes>description,image_label,meta_description,meta_keyword,meta_title,name,short_description,small_image_label,thumbnail_label</attributes>
             </products>
+            <categories>
+                <attributes>description,meta_description,meta_keywords,meta_title,name</attributes>
+            </categories>
         </capita_ti>
     </default>
 </config>

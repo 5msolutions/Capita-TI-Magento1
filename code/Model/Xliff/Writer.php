@@ -101,7 +101,10 @@ class Capita_TI_Model_Xliff_Writer
             $xml->writeAttribute('datatype', $this->_datatype);
             $xml->startElement('body');
 
-            $data = $item->toArray((array) $attributes);
+            // tried $item->toArray() but products still fill stock values that weren't asked for
+            $data = array_intersect_key(
+                $item->getData(),
+                array_fill_keys($attributes, true));
             // do not translate empty values
             $data = array_filter($data, 'strlen');
             if ($data) {
