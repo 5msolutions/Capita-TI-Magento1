@@ -27,6 +27,8 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         $select->from($this->getTable('capita_ti/category'), 'category_id')
             ->where('request_id=?', $request->getId());
         $request->setCategoryIds($adapter->fetchCol($select));
+
+        return parent::_afterLoad($request);
     }
 
     protected function _beforeSave(Mage_Core_Model_Abstract $request)
@@ -37,21 +39,25 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             );
         }
 
-        $request->setProductCount(
-            is_string($request->getProductIds()) ?
-            substr_count($request->getProductIds(), ',') + 1 :
-            count($request->getProductIds())
-        );
+        if (!$request->hasProductCount()) {
+            $request->setProductCount(
+                is_string($request->getProductIds()) ?
+                substr_count($request->getProductIds(), ',') + 1 :
+                count($request->getProductIds())
+            );
+        }
 
-        $request->setCategoryCount(
-            is_string($request->getCategoryIds()) ?
-            substr_count($request->getCategoryIds(), ',') + 1 :
-            count($request->getCategoryIds())
-        );
+        if (!$request->hasCategoryCount()) {
+            $request->setCategoryCount(
+                is_string($request->getCategoryIds()) ?
+                substr_count($request->getCategoryIds(), ',') + 1 :
+                count($request->getCategoryIds())
+            );
+        }
 
         $request->setUpdatedAt($this->formatDate(true));
 
-        return $this;
+        return parent::_beforeSave($request);
     }
 
     protected function _afterSave(Mage_Core_Model_Abstract $request)
@@ -71,6 +77,8 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         if ($request->dataHasChangedFor('category_ids')) {
             $this->_saveCategories($request);
         }
+
+        return parent::_afterSave($request);
     }
 
     protected function _afterDelete(Mage_Core_Model_Abstract $request)
@@ -82,6 +90,8 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             }
             $document->delete();
         }
+
+        return parent::_afterDelete($request);
     }
 
     protected function _saveDocuments(Capita_TI_Model_Request $request)

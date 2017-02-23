@@ -11,6 +11,7 @@
 "Could not open ""%s""","Could not open ""%s"""
 "Could not read root element","Could not read root element"
 "Customer Name","Customer Name"
+"Error","Error"
 "Expected ""%s"" element but got ""%s""","Expected ""%s"" element but got ""%s"""
 "File element has no body","File element has no body"
 "File origin is not specified","File origin is not specified"

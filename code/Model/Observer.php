@@ -20,21 +20,33 @@ class Capita_TI_Model_Observer
 
     public function cronImport(Mage_Cron_Model_Schedule $schedule)
     {
-        /* @var $documents Capita_TI_Model_Resource_Request_Document_Collection */
-        $documents = Mage::getResourceModel('capita_ti/request_document_collection');
-        $documents->addStatusFilter('importing');
-
         /* @var $reader Capita_TI_Model_Xliff_Reader */
         $reader = Mage::getSingleton('capita_ti/xliff_reader');
         $reader->addType(Mage::getSingleton('capita_ti/xliff_import_product'));
         $reader->addType(Mage::getSingleton('capita_ti/xliff_import_category'));
         $varDir = Mage::getConfig()->getVarDir() . DS;
 
-        foreach ($documents as $document) {
-            $filename = $varDir . $document->getLocalName();
-            $reader->import($filename);
-            $document->setStatus('completed')
-                ->save();
+        /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+        $requests = Mage::getModel('capita_ti/request')->getCollection();
+        $requests->addImportingFilter();
+
+        /* @var $request Capita_TI_Model_Request */
+        foreach ($requests as $request) {
+            try {
+                /* @var $document Capita_TI_Model_Request_Document */
+                foreach ($request->getDocuments() as $document) {
+                    if ($document->getStatus() == 'importing') {
+                        $filename = $varDir . $document->getLocalName();
+                        $reader->import($filename);
+                        $document->setStatus('completed');
+                    }
+                }
+                $request->setStatus('complete')->save();
+            }
+            catch (Exception $e) {
+                Mage::logException($e);
+                $request->setStatus('error')->save();
+            }
         }
     }
 }

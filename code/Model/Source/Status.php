@@ -11,7 +11,8 @@ class Capita_TI_Model_Source_Status
             'completed' => $helper->__('Completed'),
             'onHold' => $helper->__('On Hold'),
             'inProgress' => $helper->__('In Progress'),
-            'importing' => $helper->__('Importing')
+            'importing' => $helper->__('Importing'),
+            'error' => $helper->__('Error')
         );
     }
 
@@ -28,6 +29,8 @@ class Capita_TI_Model_Source_Status
                 return $helper->__('In Progress');
             case 'importing':
                 return $helper->__('Importing');
+            case 'error':
+                return $helper->__('Error');
             default:
                 return '';
         }

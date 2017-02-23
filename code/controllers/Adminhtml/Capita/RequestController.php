@@ -30,7 +30,9 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
                     $requests = Mage::getResourceModel('capita_ti/request_collection');
                     $requests->addIncompleteFilter();
                     foreach ($requests as $request) {
-                        $client->updateRequest($request);
+                        if ($request->canUpdate()) {
+                            $client->updateRequest($request);
+                        }
                     }
                 }
             }
