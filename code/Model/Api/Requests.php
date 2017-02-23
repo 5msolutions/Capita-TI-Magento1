@@ -15,6 +15,10 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
 
     public function __construct($config = null)
     {
+        if (!@$config['adapter']) {
+            // libcurl is faster but breaks on streaming large downloads
+            $config['adapter'] = 'Zend_Http_Client_Adapter_Socket';
+        }
         parent::__construct($this->getEndpoint('requests'), $config);
     }
 
@@ -82,7 +86,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $output->setSourceLanguage($sourceLanguage);
         $output->output($varDir.$filename);
         $this->setFileUpload($varDir.$filename, 'files');
-        $response = $this->decode($this->request('POST'));
+        $response = $this->decode($this->request(self::POST));
 
         $newRequest
             ->addData($response)
@@ -101,15 +105,16 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
     {
         $path = 'request/'.urlencode($request->getRemoteId());
         $this->setUri($this->getEndpoint($path));
-        $response = $this->decode($this->request('GET'));
+        $response = $this->decode($this->request(self::GET));
         // downloads might be empty
         $downloads = $request->updateStatus($response);
+        $varDir = Mage::getConfig()->getVarDir() . DS;
         /* @var $document Capita_TI_Model_Request_Document */
         foreach ($downloads as $document) {
             $uri = $this->getEndpoint('document/'.$document->getRemoteId());
             $this->setUri($uri)
-                ->setStream($document->getLocalName())
-                ->request('GET');
+                ->setStream($varDir . $document->getLocalName())
+                ->request(self::GET);
             $document->setStatus('importing');
             $request->setStatus('importing');
         }

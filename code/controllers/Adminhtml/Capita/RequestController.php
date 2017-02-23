@@ -12,25 +12,30 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         // might be called on any page, even by AJAX
         // can be used to refresh all or just one
         if ($this->getRequest()->getParam('refresh') == 'status') {
-            $id = $this->getRequest()->getParam('id');
-            /* @var $client Capita_TI_Model_Api_Requests */
-            $client = Mage::getModel('capita_ti/api_requests', array(
-                'keepalive' => true
-            ));
-            if ($id) {
-                /* @var $request Capita_TI_Model_Request */
-                $request = Mage::getModel('capita_ti/request')->load($id);
-                if ($request->canUpdate()) {
-                    $client->updateRequest($request);
+            try {
+                $id = $this->getRequest()->getParam('id');
+                /* @var $client Capita_TI_Model_Api_Requests */
+                $client = Mage::getModel('capita_ti/api_requests', array(
+                    'keepalive' => true
+                ));
+                if ($id) {
+                    /* @var $request Capita_TI_Model_Request */
+                    $request = Mage::getModel('capita_ti/request')->load($id);
+                    if ($request->canUpdate()) {
+                        $client->updateRequest($request);
+                    }
+                }
+                else {
+                    /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+                    $requests = Mage::getResourceModel('capita_ti/request_collection');
+                    $requests->addIncompleteFilter();
+                    foreach ($requests as $request) {
+                        $client->updateRequest($request);
+                    }
                 }
             }
-            else {
-                /* @var $requests Capita_TI_Model_Resource_Request_Collection */
-                $requests = Mage::getResourceModel('capita_ti/request_collection');
-                $requests->addIncompleteFilter();
-                foreach ($requests as $request) {
-                    $client->updateRequest($request);
-                }
+            catch (Exception $e) {
+                $this->_getSession()->addException($e, $this->__('There was a problem connecting to the server: %s', $e->getMessage()));
             }
         }
 
