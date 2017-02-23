@@ -37,11 +37,11 @@ class Capita_TI_Model_Observer
                 foreach ($request->getDocuments() as $document) {
                     if ($document->getStatus() == 'importing') {
                         $filename = $varDir . $document->getLocalName();
-                        $reader->import($filename);
-                        $document->setStatus('completed');
+                        $reader->import($filename, $document->getLanguage());
+                        $document->setStatus('completed')->save();
                     }
                 }
-                $request->setStatus('complete')->save();
+                $request->setStatus('completed')->save();
             }
             catch (Exception $e) {
                 Mage::logException($e);

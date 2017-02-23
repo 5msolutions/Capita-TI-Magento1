@@ -29,7 +29,7 @@ class Capita_TI_Model_Xliff_Reader
         return isset($this->_types[$type]) ? $this->_types[$type] : null;
     }
 
-    public function import($uri)
+    public function import($uri, $language = null)
     {
         $xml = new XMLReader();
         $xml->open($uri) or $this->__('Could not open "%s"', $uri);
@@ -39,7 +39,7 @@ class Capita_TI_Model_Xliff_Reader
         $version = $xml->getAttribute('version');
         $version == '1.2' or $this->__('XLIFF version is "%s" and needs to be "1.2"', $version);
 
-        while ($this->_readFile($xml));
+        while ($this->_readFile($xml, $language));
 
         $xml->close();
     }
@@ -60,7 +60,7 @@ class Capita_TI_Model_Xliff_Reader
         return false;
     }
 
-    protected function _readFile(XMLReader $xml)
+    protected function _readFile(XMLReader $xml, $language = null)
     {
         if (!$this->_nextElement($xml)) {
             return false;
@@ -70,7 +70,10 @@ class Capita_TI_Model_Xliff_Reader
         $origin = $xml->getAttribute('original') or $this->__('File origin is not specified');
         $sourceLanguage = $xml->getAttribute('source-language') or $this->__('Source language is not specified');
         $sourceLanguage = strtr($sourceLanguage, '-', '_');
-        $destLanguage = $xml->getAttribute('target-language') or $this->__('Target language is not specified');
+        $destLanguage = $xml->getAttribute('target-language');
+        if (!$destLanguage) {
+            $destLanguage = $language or $this->__('Target language is not specified');
+        }
         $destLanguage = strtr($destLanguage, '-', '_');
         if (strpos($origin, '/') !== false) {
             list($origin, $id) = explode('/', $origin);
