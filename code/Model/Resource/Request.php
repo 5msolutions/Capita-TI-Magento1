@@ -28,6 +28,11 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             ->where('request_id=?', $request->getId());
         $request->setCategoryIds($adapter->fetchCol($select));
 
+        $select = $adapter->select();
+        $select->from($this->getTable('capita_ti/block'), 'block_id')
+            ->where('request_id=?', $request->getId());
+        $request->setBlockIds($adapter->fetchCol($select));
+
         return parent::_afterLoad($request);
     }
 
@@ -55,6 +60,14 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             );
         }
 
+        if (!$request->hasBlockCount()) {
+            $request->setBlockCount(
+                is_string($request->getBlockIds()) ?
+                substr_count($request->getBlockIds(), ',') + 1 :
+                count($request->getBlockIds())
+            );
+        }
+
         $request->setUpdatedAt($this->formatDate(true));
 
         return parent::_beforeSave($request);
@@ -76,6 +89,10 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
 
         if ($request->dataHasChangedFor('category_ids')) {
             $this->_saveCategories($request);
+        }
+
+        if ($request->dataHasChangedFor('block_ids')) {
+            $this->_saveBlocks($request);
         }
 
         return parent::_afterSave($request);
@@ -200,5 +217,31 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         }
         $adapter->insertOnDuplicate($categoryTable, $insertData);
         $request->setOrigData('category_ids', $categoryIds);
+    }
+
+    protected function _saveBlocks(Capita_TI_Model_Request $request)
+    {
+        $blockTable = $this->getTable('capita_ti/block');
+        $blockIds = $request->getBlockIds();
+        if (!is_array($blockIds)) {
+            $blockIds = explode(',', (string) $blockIds);
+        }
+
+        $adapter = $this->_getWriteAdapter();
+        $condition = sprintf(
+            '(%s) AND (%s)',
+            $adapter->prepareSqlCondition('request_id', $request->getId()),
+            $adapter->prepareSqlCondition('block_id', array('nin' => $blockIds)));
+        $adapter->delete($blockTable, $condition);
+
+        $insertData = array();
+        foreach ($blockIds as $blockId) {
+            $insertData[] = array(
+                'request_id' => $request->getId(),
+                'block_id' => $blockId
+            );
+        }
+        $adapter->insertOnDuplicate($blockTable, $insertData);
+        $request->setOrigData('block_ids', $blockIds);
     }
 }

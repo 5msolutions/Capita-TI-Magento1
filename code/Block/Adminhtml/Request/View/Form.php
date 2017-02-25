@@ -19,6 +19,10 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
             $this->_addCategoryData($form, $request);
         }
 
+        if ($request->getBlockCount()) {
+            $this->_addBlockData($form, $request);
+        }
+
         $this->setForm($form);
         return parent::_prepareForm();
     }
@@ -80,6 +84,19 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
         $categories->addField('category_attributes', 'label', array(
             'label' => $this->__('Category Attributes'),
             'value' => $request->getCategoryAttributeNames()
+        ));
+
+        return $categories;
+    }
+
+    protected function _addBlockData(Varien_Data_Form $form, Capita_TI_Model_Request $request)
+    {
+        $blocks = $form->addFieldset('blocks', array(
+            'legend' => $this->__('Blocks')
+        ));
+        $blocks->addField('block_count', 'label', array(
+            'label' => $this->__('Number of blocks selected'),
+            'value' => $request->getBlockCount()
         ));
 
         return $categories;

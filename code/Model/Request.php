@@ -3,6 +3,10 @@
 /**
  * @method int getProductCount()
  * @method int[] getProductIds()
+ * @method int getCategoryCount()
+ * @method int[] getCategoryIds()
+ * @method int getBlockCount()
+ * @method int[] getBlockIds()
  * @method string getDestLanguage()
  * @method string getCategoryAttributes()
  * @method string getProductAttributes()

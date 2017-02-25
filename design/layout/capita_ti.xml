@@ -14,6 +14,7 @@
             <block type="capita_ti/adminhtml_request_new" name="capita_ti_new_request">
                 <action method="setEnableProducts"><enable>1</enable></action>
                 <action method="setEnableCategories"><enable>1</enable></action>
+                <action method="setEnableBlocks"><enable>1</enable></action>
             </block>
         </reference>
     </adminhtml_capita_request_new>

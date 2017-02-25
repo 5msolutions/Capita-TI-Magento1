@@ -62,6 +62,12 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $categories->addIdFilter($categoryIds);
         $categories->addAttributeToSelect($categoryAttributes);
 
+        $blockIds = $input->getParam('block_ids', array());
+        $blockIds = array_filter(array_unique($blockIds));
+        /* @var $blocks Mage_Cms_Model_Resource_Block_Collection */
+        $blocks = Mage::getResourceModel('cms/block_collection');
+        $blocks->addFieldToFilter('block_id', array('in' => $blockIds));
+
         /* @var $newRequest Capita_TI_Model_Request */
         $newRequest = Mage::getModel('capita_ti/request');
         $newRequest
@@ -70,7 +76,8 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             ->setProductAttributes($productAttributes)
             ->setProductIds($productIds)
             ->setCategoryIds($categoryIds)
-            ->setCategoryAttributes($categoryAttributes);
+            ->setCategoryAttributes($categoryAttributes)
+            ->setBlockIds($blockIds);
 
         // limited to one file per upload for now
         $varDir = Mage::getConfig()->getVarDir('export') . DS;
@@ -83,6 +90,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $output = Mage::getModel('capita_ti/xliff_writer');
         $output->addCollection(Mage_Catalog_Model_Product::ENTITY, $products, $newRequest->getProductAttributesArray());
         $output->addCollection(Mage_Catalog_Model_Category::ENTITY, $categories, $newRequest->getCategoryAttributesArray());
+        $output->addCollection(Mage_Cms_Model_Block::CACHE_TAG, $blocks, array('title', 'content'));
         $output->setSourceLanguage($sourceLanguage);
         $output->output($varDir.$filename);
         $this->setFileUpload($varDir.$filename, 'files');

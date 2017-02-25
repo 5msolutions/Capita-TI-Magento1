@@ -40,6 +40,18 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 		    'type' => 'number',
 		    'width' => '100px'
 		));
+		$this->addColumn('category_count', array(
+		    'index' => 'category_count',
+		    'header' => $this->__('# of categories'),
+		    'type' => 'number',
+		    'width' => '100px'
+		));
+		$this->addColumn('block_count', array(
+		    'index' => 'block_count',
+		    'header' => $this->__('# of blocks'),
+		    'type' => 'number',
+		    'width' => '100px'
+		));
 		$this->addColumn('created_at', array(
 			'index' => 'created_at',
 			'header' => $this->__('Submission Date'),
