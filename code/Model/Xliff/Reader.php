@@ -97,7 +97,7 @@ class Capita_TI_Model_Xliff_Reader
             $key = $xml->getAttribute('id');
             $key or $this->__('Trans-unit has no ID');
 
-            $xml->read();
+            while ($xml->read() && $xml->nodeType != XMLReader::ELEMENT);
             $xml->name == 'source' or $this->__('Expected "%s" element but got "%s"', 'source', $xml->name);
             $sourceData[$key] = $xml->readString();
 
