@@ -68,6 +68,12 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $blocks = Mage::getResourceModel('cms/block_collection');
         $blocks->addFieldToFilter('block_id', array('in' => $blockIds));
 
+        $pageIds = $input->getParam('page_ids', array());
+        $pageIds = array_filter(array_unique($pageIds));
+        /* @var $pages Mage_Cms_Model_Resource_Page_Collection */
+        $pages = Mage::getResourceModel('cms/page_collection');
+        $pages->addFieldToFilter('page_id', array('in' => $pageIds));
+
         /* @var $newRequest Capita_TI_Model_Request */
         $newRequest = Mage::getModel('capita_ti/request');
         $newRequest
@@ -77,7 +83,8 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             ->setProductIds($productIds)
             ->setCategoryIds($categoryIds)
             ->setCategoryAttributes($categoryAttributes)
-            ->setBlockIds($blockIds);
+            ->setBlockIds($blockIds)
+            ->setPageIds($pageIds);
 
         // limited to one file per upload for now
         $varDir = Mage::getConfig()->getVarDir('export') . DS;
@@ -91,6 +98,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $output->addCollection(Mage_Catalog_Model_Product::ENTITY, $products, $newRequest->getProductAttributesArray());
         $output->addCollection(Mage_Catalog_Model_Category::ENTITY, $categories, $newRequest->getCategoryAttributesArray());
         $output->addCollection(Mage_Cms_Model_Block::CACHE_TAG, $blocks, array('title', 'content'));
+        $output->addCollection(Mage_Cms_Model_Page::CACHE_TAG, $pages, array('title', 'content', 'content_heading', 'meta_keywords', 'meta_description'));
         $output->setSourceLanguage($sourceLanguage);
         $output->output($varDir.$filename);
         $this->setFileUpload($varDir.$filename, 'files');

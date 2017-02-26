@@ -52,7 +52,7 @@ class Capita_TI_Model_Xliff_Import_Block implements Capita_TI_Model_Xliff_Import
                     continue;
                 }
 
-                $inStores = array_diff($destStores, $block->getStores());
+                $inStores = array_diff($destStores, $blockStores);
                 if ($inStores) {
                     // block covers at least one target
                     $block->setTitle(@$destData['title'])

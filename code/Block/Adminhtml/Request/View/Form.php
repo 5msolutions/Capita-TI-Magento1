@@ -23,6 +23,10 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
             $this->_addBlockData($form, $request);
         }
 
+        if ($request->getPageCount()) {
+            $this->_addPageData($form, $request);
+        }
+
         $this->setForm($form);
         return parent::_prepareForm();
     }
@@ -97,6 +101,19 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
         $blocks->addField('block_count', 'label', array(
             'label' => $this->__('Number of blocks selected'),
             'value' => $request->getBlockCount()
+        ));
+
+        return $categories;
+    }
+
+    protected function _addPageData(Varien_Data_Form $form, Capita_TI_Model_Request $request)
+    {
+        $pages = $form->addFieldset('pages', array(
+            'legend' => $this->__('Pages')
+        ));
+        $pages->addField('page_count', 'label', array(
+            'label' => $this->__('Number of pages selected'),
+            'value' => $request->getPageCount()
         ));
 
         return $categories;

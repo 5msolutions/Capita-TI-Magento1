@@ -15,6 +15,7 @@
                 <action method="setEnableProducts"><enable>1</enable></action>
                 <action method="setEnableCategories"><enable>1</enable></action>
                 <action method="setEnableBlocks"><enable>1</enable></action>
+                <action method="setEnablePages"><enable>1</enable></action>
             </block>
         </reference>
     </adminhtml_capita_request_new>

@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Capita_TI>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
         </Capita_TI>
     </modules>
 
@@ -37,6 +37,9 @@
                     <category>
                         <table>capita_ti_category</table>
                     </category>
+                    <page>
+                        <table>capita_ti_page</table>
+                    </page>
                     <product>
                         <table>capita_ti_product</table>
                     </product>

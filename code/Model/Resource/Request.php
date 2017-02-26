@@ -33,6 +33,11 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             ->where('request_id=?', $request->getId());
         $request->setBlockIds($adapter->fetchCol($select));
 
+        $select = $adapter->select();
+        $select->from($this->getTable('capita_ti/page'), 'page_id')
+            ->where('request_id=?', $request->getId());
+        $request->setPageIds($adapter->fetchCol($select));
+
         return parent::_afterLoad($request);
     }
 
@@ -68,6 +73,14 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             );
         }
 
+        if (!$request->hasPageCount()) {
+            $request->setPageCount(
+                is_string($request->getPageIds()) ?
+                substr_count($request->getPageIds(), ',') + 1 :
+                count($request->getPageIds())
+            );
+        }
+
         $request->setUpdatedAt($this->formatDate(true));
 
         return parent::_beforeSave($request);
@@ -93,6 +106,10 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
 
         if ($request->dataHasChangedFor('block_ids')) {
             $this->_saveBlocks($request);
+        }
+
+        if ($request->dataHasChangedFor('page_ids')) {
+            $this->_savePages($request);
         }
 
         return parent::_afterSave($request);
@@ -243,5 +260,31 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         }
         $adapter->insertOnDuplicate($blockTable, $insertData);
         $request->setOrigData('block_ids', $blockIds);
+    }
+
+    protected function _savePages(Capita_TI_Model_Request $request)
+    {
+        $pageTable = $this->getTable('capita_ti/page');
+        $pageIds = $request->getPageIds();
+        if (!is_array($pageIds)) {
+            $pageIds = explode(',', (string) $pageIds);
+        }
+
+        $adapter = $this->_getWriteAdapter();
+        $condition = sprintf(
+            '(%s) AND (%s)',
+            $adapter->prepareSqlCondition('request_id', $request->getId()),
+            $adapter->prepareSqlCondition('page_id', array('nin' => $pageIds)));
+        $adapter->delete($pageTable, $condition);
+
+        $insertData = array();
+        foreach ($pageIds as $pageId) {
+            $insertData[] = array(
+                'request_id' => $request->getId(),
+                'page_id' => $pageId
+            );
+        }
+        $adapter->insertOnDuplicate($pageTable, $insertData);
+        $request->setOrigData('page_ids', $pageIds);
     }
 }

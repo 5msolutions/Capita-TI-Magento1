@@ -28,6 +28,11 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
         return (array) $this->getSession()->getCapitaBlockIds();
     }
 
+    protected function getPageIds()
+    {
+        return (array) $this->getSession()->getCapitaPageIds();
+    }
+
     protected function _prepareForm()
     {
         $form = new Varien_Data_Form(array(
@@ -56,12 +61,14 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             'values' => $locales
         ))
         ->setAfterElementHtml('<script type="text/javascript">
+            (function(){
             var autoable = function(event) {
                 $$("#dest_language option").invoke("writeAttribute","disabled",null);
                 $$("#dest_language option[value="+$F(this)+"]").invoke("writeAttribute","disabled","disabled");
             };
             Event.observe("source_language", "change", autoable);
             autoable.call("source_language");
+            })();
             </script>');
 
         if ($this->getParentBlock()->getEnableProducts()) {
@@ -74,6 +81,10 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
 
         if ($this->getParentBlock()->getEnableBlocks()) {
             $this->_addBlocksFieldset($form);
+        }
+
+        if ($this->getParentBlock()->getEnablePages()) {
+            $this->_addPagesFieldset($form);
         }
 
         $this->setForm($form);
@@ -146,6 +157,7 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             'value' => $this->getBlockIds()
         ))
         ->setAfterElementHtml('<script type="text/javascript">
+            (function(){
             var autoable = function(event) {
                 var lang = $F(this);
                 $$("#block_ids option").each(function(option) {
@@ -158,6 +170,50 @@ class Capita_TI_Block_Adminhtml_Request_New_Form extends Mage_Adminhtml_Block_Wi
             };
             Event.observe("source_language", "change", autoable);
             autoable.call("source_language");
+            })();
+            </script>')
+        ;
+    }
+
+    protected function _addPagesFieldset(Varien_Data_Form $form)
+    {
+        /* @var $collection Mage_Cms_Model_Resource_Page_Collection */
+        $collection = Mage::helper('capita_ti')->getCmsPagesWithLanguages();
+        $languagesJson = $this->helper('capita_ti')->jsonEncode(
+            array_filter($collection->walk('getLanguages')));
+        $options = array();
+        foreach ($collection as $page) {
+            $options[] = array(
+                'value' => $page->getId(),
+                'label' => $page->getTitle()
+            );
+        }
+
+        $pages = $form->addFieldset('pages', array(
+            'legend' => $this->__('CMS Pages')
+        ));
+        $pages->addField('page_ids', 'multiselect', array(
+            'name' => 'page_ids',
+            'label' => $this->__('CMS Pages'),
+            'note' => $this->__('Only pages that match the source language can be selected.'),
+            'values' => $options,
+            'value' => $this->getPageIds()
+        ))
+        ->setAfterElementHtml('<script type="text/javascript">
+            (function(){
+            var autoable = function(event) {
+                var lang = $F(this);
+                $$("#page_ids option").each(function(option) {
+                    var langs = '.$languagesJson.'[option.value];
+                    if (langs) {
+                        option.writeAttribute("disabled", langs.indexOf(lang) >= 0 ? null : "disabled");
+                    }
+                    // else pages without definite language are ignored
+                });
+            };
+            Event.observe("source_language", "change", autoable);
+            autoable.call("source_language");
+            })();
             </script>')
         ;
     }

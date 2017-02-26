@@ -7,6 +7,8 @@
  * @method int[] getCategoryIds()
  * @method int getBlockCount()
  * @method int[] getBlockIds()
+ * @method int getPageCount()
+ * @method int[] getPageIds()
  * @method string getDestLanguage()
  * @method string getCategoryAttributes()
  * @method string getProductAttributes()

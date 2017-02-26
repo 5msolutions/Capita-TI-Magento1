@@ -59,4 +59,28 @@ class Capita_TI_Helper_Data extends Mage_Core_Helper_Data
         }
         return $blocks;
     }
+
+    /**
+     * Assign locale codes to CMS page objects
+     * 
+     * Pages with global scope have ambiguous languages so nothing is added
+     * 
+     * @return Mage_Cms_Model_Resource_Page_Collection
+     */
+    public function getCmsPagesWithLanguages()
+    {
+        $pages = Mage::getModel('cms/page')->getCollection();
+        /* @var $page Mage_Cms_Model_Page */
+        foreach ($pages as $id => $page) {
+            $stores = $page->getResource()->lookupStoreIds($id);
+            if (!$stores || ($stores == array(0))) continue;
+
+            $languages = array();
+            foreach ($stores as $store) {
+                $languages[] = Mage::getStoreConfig('general/locale/code', $store);
+            }
+            $page->setLanguages(array_unique($languages));
+        }
+        return $pages;
+    }
 }

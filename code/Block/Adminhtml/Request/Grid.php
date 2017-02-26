@@ -52,6 +52,12 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 		    'type' => 'number',
 		    'width' => '100px'
 		));
+		$this->addColumn('page_count', array(
+		    'index' => 'page_count',
+		    'header' => $this->__('# of pages'),
+		    'type' => 'number',
+		    'width' => '100px'
+		));
 		$this->addColumn('created_at', array(
 			'index' => 'created_at',
 			'header' => $this->__('Submission Date'),

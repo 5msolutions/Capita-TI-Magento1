@@ -25,6 +25,7 @@ class Capita_TI_Model_Observer
         $reader->addType(Mage::getSingleton('capita_ti/xliff_import_product'));
         $reader->addType(Mage::getSingleton('capita_ti/xliff_import_category'));
         $reader->addType(Mage::getSingleton('capita_ti/xliff_import_block'));
+        $reader->addType(Mage::getSingleton('capita_ti/xliff_import_page'));
         $varDir = Mage::getConfig()->getVarDir() . DS;
 
         /* @var $requests Capita_TI_Model_Resource_Request_Collection */
