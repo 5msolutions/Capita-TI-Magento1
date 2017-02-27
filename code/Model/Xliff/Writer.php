@@ -64,42 +64,62 @@ class Capita_TI_Model_Xliff_Writer
     /**
      * Write a collection of objects to $uri as translateable sources
      * 
-     * @param string $uri
+     * If $uri is an array the keys should be language codes.
+     * 
+     * @param array|string $uri
      * @param traversable $entities
      * @param string $group
      * @param string[] $attributes
      */
     public function output($uri)
     {
-        $xml = new XMLWriter();
-        $xml->openUri($uri);
-        $xml->startDocument();
-        $xml->startElement('xliff');
-        $xml->writeAttribute('version', '1.2');
-        $xml->writeAttribute('xmlns', self::XML_NAMESPACE);
-
-        foreach ($this->_collections as $key => $collection) {
-            $this->_writeCollection($xml, $key, $collection, @$this->_attributes[$key]);
+        $uris = is_array($uri) ? $uri : array($this->_sourceLanguage => $uri);
+        $writers = array();
+        foreach ($uris as $language => $uri) {
+            $xml = new XMLWriter();
+            $xml->openUri($uri);
+            $xml->startDocument();
+            $xml->startElement('xliff');
+            $xml->writeAttribute('version', '1.2');
+            $xml->writeAttribute('xmlns', self::XML_NAMESPACE);
+            $writers[$language] = $xml;
         }
 
-        // end all open elements, easier than remembering how many to do
-        while ($xml->endElement());
-        // only ever one document to end
-        $xml->endDocument();
-        $xml->flush();
-        // force file to close, just in case
-        unset($xml);
+        foreach ($this->_collections as $key => $collection) {
+            $this->_writeCollection($writers, $key, $collection, @$this->_attributes[$key]);
+        }
+
+        foreach ($writers as $xml) {
+            // end all open elements, easier than remembering how many to do
+            while ($xml->endElement());
+            // only ever one document to end
+            $xml->endDocument();
+            $xml->flush();
+            // force file to close, just in case
+            unset($xml);
+        }
     }
 
-    protected function _writeCollection(XMLWriter $xml, $original, Varien_Data_Collection $collection, $attributes)
+    /**
+     * Uses a collection once, writing it's objects to potentially several files
+     * 
+     * @param XMLWriter[] $writers
+     * @param string $original
+     * @param Varien_Data_Collection $collection
+     * @param string[] $attributes
+     */
+    protected function _writeCollection($writers, $original, Varien_Data_Collection $collection, $attributes)
     {
         /* @var $item Varien_Object */
         foreach ($collection as $id => $item) {
-            $xml->startElement('file');
-            $xml->writeAttribute('original', $original . '/' . ($item->getId() ? $item->getId() : $id));
-            $xml->writeAttribute('source-language', $this->_sourceLanguage);
-            $xml->writeAttribute('datatype', $this->_datatype);
-            $xml->startElement('body');
+            foreach ($writers as $language => $xml) {
+                $xml->startElement('file');
+                $xml->writeAttribute('original', $original . '/' . ($item->getId() ? $item->getId() : $id));
+                $xml->writeAttribute('source-language', $this->_sourceLanguage);
+                $xml->writeAttribute('target-language', $language);
+                $xml->writeAttribute('datatype', $this->_datatype);
+                $xml->startElement('body');
+            }
 
             // tried $item->toArray() but products still fill stock values that weren't asked for
             $data = array_intersect_key(
@@ -109,20 +129,20 @@ class Capita_TI_Model_Xliff_Writer
             $data = array_filter($data, 'strlen');
             if ($data) {
                 foreach ($data as $id => $source) {
-                    $xml->startElement('trans-unit');
-                    $xml->writeAttribute('id', $id);
-                    $xml->startElement('source');
-                    $xml->text($source);
-                    $xml->endElement(); // source
-                    $xml->startElement('target');
-                    $xml->text($source); // a deliberate duplicate
-                    $xml->endElement(); // target
-                    $xml->endElement(); // trans-unit
+                    foreach ($writers as $xml) {
+                        $xml->startElement('trans-unit');
+                        $xml->writeAttribute('id', $id);
+                        $xml->writeElement('source', $source);
+                        $xml->writeElement('target', $source);
+                        $xml->endElement(); // trans-unit
+                    }
                 }
             }
 
-            $xml->endElement(); // body
-            $xml->endElement(); // file
+            foreach ($writers as $xml) {
+                $xml->endElement(); // body
+                $xml->endElement(); // file
+            }
         }
         if ($this->_autoClear) {
             $collection->clear();
