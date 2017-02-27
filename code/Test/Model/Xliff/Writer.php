@@ -20,7 +20,7 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
 
     protected function setUp()
     {
-        $this->filename = tempnam(sys_get_temp_dir(), 'xliff');
+        $this->filename = tempnam(sys_get_temp_dir(), 'mgxliff');
         touch($this->filename);
         $this->writer = Mage::getModel('capita_ti/xliff_writer');
     }
@@ -49,7 +49,7 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
     {
         $collection = new Varien_Data_Collection();
         $collection->addItem(new Varien_Object());
-        $this->writer->addCollection('foo', $collection);
+        $this->writer->addCollection('foo', $collection, array());
         $this->writer->output($this->filename);
         $this->assertXPathMatches(1, 'count(/x:xliff)', 'Document starts with "xliff" element');
         $this->assertXPathMatches(1, 'count(/x:xliff/x:file[@original="foo/0"])', 'Document has one "file" element');
@@ -65,7 +65,7 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
         $cupboard->addItem(new Varien_Object(array(
                 'type'=>'A cup',
             )));
-        $this->writer->addCollection('cupboard', $cupboard);
+        $this->writer->addCollection('cupboard', $cupboard, array('type'));
         $this->writer->output($this->filename);
         $this->assertXPathMatches('A cup', 'string(//x:trans-unit[@id="type"]/x:source)', 'Trans unit IDs are attribute key');
     }

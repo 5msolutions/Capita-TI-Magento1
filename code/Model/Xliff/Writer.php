@@ -29,7 +29,7 @@ class Capita_TI_Model_Xliff_Writer
      * @param string[] $attributes
      * @return Capita_TI_Model_Xliff_Writer $this
      */
-    public function addCollection($key, Varien_Data_Collection $collection, $attributes = null)
+    public function addCollection($key, Varien_Data_Collection $collection, $attributes)
     {
         $this->_collections[$key] = $collection;
         $this->_attributes[$key] = $attributes;
@@ -91,7 +91,7 @@ class Capita_TI_Model_Xliff_Writer
         unset($xml);
     }
 
-    protected function _writeCollection(XMLWriter $xml, $original, Varien_Data_Collection $collection, $attributes = null)
+    protected function _writeCollection(XMLWriter $xml, $original, Varien_Data_Collection $collection, $attributes)
     {
         /* @var $item Varien_Object */
         foreach ($collection as $id => $item) {
