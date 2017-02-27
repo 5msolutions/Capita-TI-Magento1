@@ -86,12 +86,20 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             ->setBlockIds($blockIds)
             ->setPageIds($pageIds);
 
-        // limited to one file per upload for now
         $varDir = Mage::getConfig()->getVarDir('export') . DS;
         if (!$varDir) {
             throw new Mage_Adminhtml_Exception(Mage::helper('capita_ti')->__('Cannot write to "%s"', $varDir));
         }
-        $filename = sprintf('capita-ti-%s.mgxliff', Zend_Date::now()->toString('y-MM-d-HH-mm-ss'));
+        $filenames = array();
+        $absFilenames = array();
+        foreach (explode(',', $destLanguage) as $language) {
+            $language = strtr($language, '_', '-');
+            $filenames[$language] = sprintf(
+                'capita-ti-%d-%s.mgxliff',
+                time(),
+                $language);
+            $absFilenames[$language] = $varDir.$filenames[$language];
+        }
 
         /* @var $output Capita_TI_Model_Xliff_Writer */
         $output = Mage::getModel('capita_ti/xliff_writer');
@@ -100,13 +108,16 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $output->addCollection(Mage_Cms_Model_Block::CACHE_TAG, $blocks, array('title', 'content'));
         $output->addCollection(Mage_Cms_Model_Page::CACHE_TAG, $pages, array('title', 'content', 'content_heading', 'meta_keywords', 'meta_description'));
         $output->setSourceLanguage($sourceLanguage);
-        $output->output($varDir.$filename);
-        $this->setFileUpload($varDir.$filename, 'files');
+        $output->output($absFilenames);
+        foreach ($absFilenames as $absFilename) {
+            $this->setFileUpload($absFilename, 'files');
+        }
         $response = $this->decode($this->request(self::POST));
 
-        $newRequest
-            ->addData($response)
-            ->addLocalDocument('export'.DS.$filename);
+        $newRequest->addData($response);
+        foreach ($filenames as $filename) {
+            $newRequest->addLocalDocument('export'.DS.$filename);
+        }
         return $newRequest;
     }
 
