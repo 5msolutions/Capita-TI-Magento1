@@ -14,7 +14,9 @@ noticed pretty quickly.
 
 XLIFF format (http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html) was
 chosen for ex/imports. It supports marking non-translateable parts within text,
-which is perfect for those awkward HTML tags.
+which is perfect for those awkward HTML tags. An explanation and directions for
+encoding HTML can be found here:
+http://docs.oasis-open.org/xliff/v1.2/xliff-profile-html/xliff-profile-html-1.2-cd02.html
 
 Like any considerate design this can have wider applications.
 XLIFF is an open standard and another translator service need only change the

@@ -39,6 +39,8 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
         }
         $xpath = new DOMXPath($this->document);
         $xpath->registerNamespace('x', Capita_TI_Model_Xliff_Writer::XML_NAMESPACE);
+        $xpath->registerNamespace('h', Capita_TI_Model_Xliff_Writer::HTM_NAMESPACE);
+        $xpath->registerNamespace('c', Capita_TI_Model_Xliff_Writer::CMS_NAMESPACE);
         $this->assertEquals($expected, $xpath->evaluate($path), $message);
     }
 
@@ -86,5 +88,20 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
         $this->assertXPathMatches(2, 'count(//x:source)', 'Attributes are filterable');
         $this->assertXPathMatches('A cup', 'string(//x:trans-unit[@id="type"]/x:source)');
         $this->assertXPathMatches('A modern classic', 'string(//x:trans-unit[@id="description"]/x:source)');
+    }
+
+    /**
+     * @test
+     */
+    public function htmlIsEscaped()
+    {
+        $cupboard = new Varien_Data_Collection();
+        $cupboard->addItem(new Varien_Object(array(
+                'type'=>'A <em>big</em> cup',
+            )));
+        $this->writer->addCollection('cupboard', $cupboard, array('type'));
+        $this->writer->output($this->filename);
+        $this->assertXPathMatches('A big cup', 'string(//x:source)', 'HTML tags are encoded');
+        $this->assertXPathMatches('big', 'string(//x:source/x:g[@ctype="italic"])', 'HTML tags are namespaced');
     }
 }
