@@ -99,18 +99,128 @@ class Capita_TI_Model_Xliff_Reader
 
             while ($xml->read() && $xml->nodeType != XMLReader::ELEMENT);
             $xml->name == 'source' or $this->__('Expected "%s" element but got "%s"', 'source', $xml->name);
-            $sourceData[$key] = $xml->readString();
+            $sourceData[$key] = $this->readHtml($xml->expand());
 
             while ($xml->name != 'target') {
                 $xml->next();
             }
-            $destData[$key] = $xml->readString();
+            $destData[$key] = $this->readHtml($xml->expand());
 
             while ($xml->next() && $xml->name != 'trans-unit');
         }
         $importer->import($id, $sourceLanguage, $destLanguage, $sourceData, $destData);
 
         return true;
+    }
+
+    /**
+     * Decode XLIFF elements into raw HTML and CMS directives
+     * 
+     * @param DOMNode $source
+     * @return string
+     */
+    public function readHtml(DOMNode $source)
+    {
+        $html = '';
+        $node = $source->firstChild;
+        while ($node) {
+            if ($node instanceof DOMText) {
+                $html .= $node->nodeValue;
+            }
+            elseif ($node instanceof DOMElement) {
+                if ($node->getAttribute('ctype') == 'x-cms-directive') {
+                    $html .= base64_decode($node->textContent);
+                }
+                else switch ($node->tagName) {
+                    case 'g':
+                        $tagName = $this->getTagFromCtype($node);
+                        $attributes = $this->getAttributes($node);
+                        $html .= '<'.$tagName.$attributes.'>';
+                        $html .= $this->readHtml($node);
+                        $html .= '</'.$tagName.'>';
+                        break;
+                    case 'ph':
+                        $tagName = $this->getTagFromCtype($node);
+                        $attributes = $this->getAttributes($node);
+                        $html .= '<'.$tagName.$attributes.$this->readSubs($node).'>';
+                        // no closing tag
+                        break;
+                    case 'x':
+                        $tagName = $this->getTagFromCtype($node);
+                        $attributes = $this->getAttributes($node);
+                        $html .= '<'.$tagName.$attributes.'>';
+                        // no closing tag
+                        break;
+                    default:
+                        $this->__('Unrecognised element: <%s>', $node->tagName);
+                }
+            }
+            $node = $node->nextSibling;
+        }
+        return $html;
+    }
+
+    protected function getTagFromCtype(DOMElement $element)
+    {
+        $ctype = $element->getAttribute('ctype');
+        switch ($ctype) {
+            case 'image':
+                return 'img';
+            case 'pb':
+                return 'hr';
+            case 'lb':
+                return 'br';
+            case 'bold':
+                return 'strong';
+            case 'italic':
+                return 'em';
+            case 'underline':
+                return 'u';
+            case 'link':
+                return 'a';
+            default:
+                if (preg_match('/^x-html-(\w+)$/', $ctype, $result)) {
+                    return $result[1];
+                }
+        }
+        $this->__('Unrecognised ctype: "%s"', $ctype);
+    }
+
+    protected function getAttributes(DOMElement $element)
+    {
+        $attrs = '';
+        foreach ($element->attributes as $attribute) {
+            $name = $attribute->nodeName;
+            $value = $attribute->nodeValue;
+            if (strpos($name, 'htm:') === 0) {
+                $name = substr($name, 4);
+            }
+            elseif (strpos($name, 'cms:') === 0) {
+                $name = substr($name, 4);
+                $value = base64_decode($value);
+            }
+            else {
+                continue;
+            }
+            $attrs .= sprintf(' %s="%s"', $name, $value);
+        }
+        return $attrs;
+    }
+
+    protected function readSubs(DOMElement $element)
+    {
+        $attrs = '';
+        $sub = $element->firstChild;
+        while ($sub) {
+            if ($sub instanceof DOMElement && $sub->tagName == 'sub') {
+                $ctype = $sub->getAttribute('ctype');
+                $name = preg_replace('/^x-html-\w+-(\w+)$/', '$1', $ctype);
+                $value = $sub->textContent;
+                $attrs .= sprintf(' %s="%s"', $name, $value);
+            }
+            $sub = $sub->nextSibling;
+        }
+        return $attrs;
     }
 
     /**

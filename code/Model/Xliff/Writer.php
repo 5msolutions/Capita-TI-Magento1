@@ -196,7 +196,7 @@ class Capita_TI_Model_Xliff_Writer
                 if (array_search($tagName, $tagStack) === false) continue;
                 // pop off as many tags as necessary
                 do {
-                    $xml->endElement();
+                    $xml->fullEndElement();
                 } while ($tagName != array_pop($tagStack));
             }
             elseif (preg_match('/^{{.*}}$/', $part)) {
@@ -206,7 +206,7 @@ class Capita_TI_Model_Xliff_Writer
                 if (preg_match('/{{var (.*?)}}/', $part, $variable)) {
                     $xml->writeAttribute('equiv-text', $variable[1]);
                 }
-                $xml->text(base64_encode(trim($part, '{}')));
+                $xml->text(base64_encode($part));
                 $xml->endElement();
             }
             else {

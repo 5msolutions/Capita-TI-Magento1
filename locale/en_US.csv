@@ -61,6 +61,8 @@
 "Trans-unit has no ID","Trans-unit has no ID"
 "Translate","Translate"
 "Translation Requests","Translation Requests"
+"Unrecognised ctype: ""%s""","Unrecognised ctype: ""%s"""
+"Unrecognised element: <%s>","Unrecognised element: <%s>"
 "Unrecognised file origin: ""%s""","Unrecognised file origin: ""%s"""
 "Username","Username"
 "XLIFF version is ""%s"" and needs to be ""1.2""","XLIFF version is ""%s"" and needs to be ""1.2"""
