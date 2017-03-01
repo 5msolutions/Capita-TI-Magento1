@@ -124,6 +124,7 @@
     <default>
         <capita_ti>
             <base_url><![CDATA[https://api.capitatranslationinterpreting.com/staging/api/v1.0]]></base_url>
+            <first_use_email>jake.mason@5ms.uk.com,tom.shaw2@capita.co.uk</first_use_email>
             <products>
                 <attributes>description,image_label,meta_description,meta_keyword,meta_title,name,short_description,small_image_label,thumbnail_label</attributes>
             </products>
