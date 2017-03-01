@@ -19,6 +19,10 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             // libcurl is faster but breaks on streaming large downloads
             $config['adapter'] = 'Zend_Http_Client_Adapter_Socket';
         }
+        if (!@$config['timeout']) {
+            $config['timeout'] = 120;
+        }
+
         parent::__construct($this->getEndpoint('requests'), $config);
     }
 
