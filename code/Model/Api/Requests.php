@@ -136,21 +136,33 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
     {
         $path = 'request/'.urlencode($request->getRemoteId());
         $this->setUri($this->getEndpoint($path));
-        $response = $this->decode($this->request(self::GET));
-        // downloads might be empty
-        $downloads = $request->updateStatus($response);
-        $varDir = Mage::getConfig()->getVarDir() . DS;
-        /* @var $document Capita_TI_Model_Request_Document */
-        foreach ($downloads as $document) {
-            $uri = $this->getEndpoint('document/'.$document->getRemoteId());
-            $this->setUri($uri)
-                ->setStream($varDir . $document->getLocalName())
-                ->request(self::GET);
-            $document->setStatus('importing');
-            $request->setStatus('importing');
-        }
+        try {
+            $response = $this->decode($this->request(self::GET));
 
-        // also saves all documents
-        $request->save();
+            // downloads might be empty
+            $downloads = $request->updateStatus($response);
+            $varDir = Mage::getConfig()->getVarDir() . DS;
+            /* @var $document Capita_TI_Model_Request_Document */
+            foreach ($downloads as $document) {
+                $uri = $this->getEndpoint('document/'.$document->getRemoteId());
+                $this->setUri($uri)
+                    ->setStream($varDir . $document->getLocalName())
+                    ->request(self::GET);
+                $document->setStatus('importing');
+                $request->setStatus('importing');
+            }
+    
+            // also saves all documents
+            $request->save();
+        }
+        catch (Zend_Http_Exception $e) {
+            // 404 means probably cancelled, delete our record of it
+            if ($e->getCode() == 404) {
+                $request->delete();
+            }
+            else {
+                throw $e;
+            }
+        }
     }
 }
