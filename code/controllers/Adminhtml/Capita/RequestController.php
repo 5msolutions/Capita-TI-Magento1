@@ -72,6 +72,38 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         $this->renderLayout();
     }
 
+    public function productsTabAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    public function productsGridAction()
+    {
+        $this->loadLayout();
+        $this->getLayout()->getBlock('request_tab_products_grid')->setProductIds(
+            $this->getRequest()->getParam('product_ids', array()));
+        $this->renderLayout();
+    }
+
+    public function categoriesTabAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    public function blocksTabAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    public function pagesTabAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
     public function saveAction()
     {
         try {

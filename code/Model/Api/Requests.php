@@ -51,7 +51,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
 
         // now for the main content
         $productIds = $input->getParam('product_ids', '');
-        $productIds = array_filter(array_unique(explode(',', $productIds)));
+        $productIds = array_filter(array_unique(preg_split('/[,&]/', $productIds)));
         $productAttributes = $input->getParam('product_attributes', array());
         /* @var $products Mage_Catalog_Model_Resource_Product_Collection */
         $products = Mage::getResourceModel('catalog/product_collection');
