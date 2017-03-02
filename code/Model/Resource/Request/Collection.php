@@ -8,21 +8,36 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         $this->_init('capita_ti/request');
     }
 
+    protected function _initSelect()
+    {
+        parent::_initSelect();
+        $this->getSelect()
+            ->joinLeft(
+                array('products' => $this->getTable('capita_ti/product')),
+                'main_table.request_id=products.request_id',
+                array('product_ids' => 'GROUP_CONCAT(DISTINCT product_id)'))
+            ->joinLeft(
+                array('categorys' => $this->getTable('capita_ti/category')),
+                'main_table.request_id=categorys.request_id',
+                array('category_ids' => 'GROUP_CONCAT(DISTINCT category_id)'))
+            ->joinLeft(
+                array('blocks' => $this->getTable('capita_ti/block')),
+                'main_table.request_id=blocks.request_id',
+                array('block_ids' => 'GROUP_CONCAT(DISTINCT block_id)'))
+            ->joinLeft(
+                array('pages' => $this->getTable('capita_ti/page')),
+                'main_table.request_id=pages.request_id',
+                array('page_ids' => 'GROUP_CONCAT(DISTINCT page_id)'))
+            ->group('main_table.request_id');
+        return $this;
+    }
+
     protected function _afterLoad()
     {
         if ($this->count()) {
             /* @var $documents Capita_TI_Model_Resource_Request_Document_Collection */
             $documents = Mage::getResourceModel('capita_ti/request_document_collection');
             $documents->addFieldToFilter('request_id', array('in' => array_keys($this->_items)));
-
-            $adapter = $this->getConnection();
-            $productIds = $adapter->select()
-                ->from($this->getTable('capita_ti/product'), 'product_id')
-                ->where('request_id=:request_id');
-            
-            $categoryIds = $adapter->select()
-                ->from($this->getTable('capita_ti/category'), 'category_id')
-                ->where('request_id=:request_id');
 
             foreach ($this as $request) {
                 if ($request->hasDestLanguage()) {
@@ -31,13 +46,18 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
                     );
                 }
 
-                $bind = array(':request_id' => $request->getId());
-                $request
-                    ->setDocuments($documents->getItemsByColumnValue(
-                        'request_id',
-                        $request->getId()))
-                    ->setProductIds($adapter->fetchCol($productIds, $bind))
-                    ->setCategoryIds($adapter->fetchCol($categoryIds, $bind));
+                $reqdocs = array();
+                foreach ($documents as $document) {
+                    if ($document->getRequestId() == $request->getId()) {
+                        $reqdocs[$document->getId()] = $document;
+                    }
+                }
+                $request->setDocuments($reqdocs);
+
+                $request->setProductIds(array_filter(explode(',', $request->getProductIds())));
+                $request->setCategoryIds(array_filter(explode(',', $request->getCategoryIds())));
+                $request->setBlockIds(array_filter(explode(',', $request->getBlockIds())));
+                $request->setPageIds(array_filter(explode(',', $request->getPageIds())));
             }
         }
 
