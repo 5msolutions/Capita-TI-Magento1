@@ -21,7 +21,7 @@ $tableR->addColumn('dest_language', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
 ), 'Comma separated ISO 639 langauge codes');
 $tableR->addColumn('status', Varien_Db_Ddl_Table::TYPE_TEXT, 20, array(
     'nullable' => false
-), 'One of completed/onHold/inProgress/uploading/downloading');
+), 'One of completed/onHold/inProgress/importing/exporting');
 $tableR->addColumn('product_count', Varien_Db_Ddl_Table::TYPE_INTEGER, null,
     array(), 'Number of products before translation');
 $tableR->addColumn('product_attributes', Varien_Db_Ddl_Table::TYPE_TEXT, 1000,
