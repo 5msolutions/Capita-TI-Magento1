@@ -224,8 +224,8 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
             $remoteDocuments = call_user_func_array('array_merge_recursive', @$info['Documents']);
             $finalDocuments = (array) @$remoteDocuments['FinalDocuments'];
 
-            foreach ($finalDocuments as $document) {
-                $newdoc = Mage::getModel('capita_ti/request_document', $document);
+            foreach ($finalDocuments as $finalDocument) {
+                $newdoc = Mage::getModel('capita_ti/request_document', $finalDocument);
                 $filename = 'import'.DS.basename($newdoc->getRemoteName());
                 // ensure directory exists
                 Mage::getConfig()->getVarDir('import');
