@@ -18,6 +18,22 @@ class Capita_TI_Model_Observer
             ));
     }
 
+    public function cronRefresh(Mage_Cron_Model_Schedule $schedule)
+    {
+        /* @var $client Capita_TI_Model_Api_Requests */
+        $client = Mage::getModel('capita_ti/api_requests', array(
+            'keepalive' => true
+        ));
+        /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+        $requests = Mage::getResourceModel('capita_ti/request_collection');
+        $requests->addIncompleteFilter();
+        foreach ($requests as $request) {
+            if ($request->canUpdate()) {
+                $client->updateRequest($request);
+            }
+        }
+    }
+
     public function cronImport(Mage_Cron_Model_Schedule $schedule)
     {
         /* @var $reader Capita_TI_Model_Xliff_Reader */

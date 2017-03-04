@@ -58,19 +58,6 @@
         </resources>
     </global>
 
-    <crontab>
-        <jobs>
-            <capita_ti_import>
-                <schedule>
-                    <cron_expr>*/5 * * * *</cron_expr>
-                </schedule>
-                <run>
-                    <model>capita_ti/observer::cronImport</model>
-                </run>
-            </capita_ti_import>
-        </jobs>
-    </crontab>
-
     <admin>
         <routers>
             <adminhtml>
@@ -122,9 +109,30 @@
     </phpunit>
 
     <default>
+        <crontab>
+            <jobs>
+                <capita_ti_refresh>
+                    <run>
+                        <model>capita_ti/observer::cronRefresh</model>
+                    </run>
+                </capita_ti_refresh>
+                <capita_ti_import>
+                    <run>
+                        <model>capita_ti/observer::cronImport</model>
+                    </run>
+                </capita_ti_import>
+            </jobs>
+        </crontab>
+
         <capita_ti>
             <base_url><![CDATA[https://api.capitatranslationinterpreting.com/staging/api/v1.0]]></base_url>
             <first_use_email>jake.mason@5ms.uk.com,tom.shaw2@capita.co.uk,presales@capita-ti.com</first_use_email>
+
+            <scheduling>
+                <refresh>60</refresh>
+                <import>5</import>
+                <export>1440</export>
+            </scheduling>
             <products>
                 <attributes>description,image_label,meta_description,meta_keyword,meta_title,name,short_description,small_image_label,thumbnail_label</attributes>
             </products>
