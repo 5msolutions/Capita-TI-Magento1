@@ -3,6 +3,7 @@
     <adminhtml_capita_request_index>
         <reference name="content">
             <block type="capita_ti/adminhtml_request" />
+            <block type="capita_ti/adminhtml_cron_messages" />
         </reference>
     </adminhtml_capita_request_index>
 
