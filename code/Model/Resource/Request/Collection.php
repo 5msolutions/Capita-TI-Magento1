@@ -32,6 +32,15 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         return $this;
     }
 
+    public function getSelectCountSql()
+    {
+        // undo effects of _initSelect() above
+        $select = parent::getSelectCountSql();
+        $select->reset(Zend_Db_Select::GROUP);
+        $select->resetJoinLeft();
+        return $select;
+    }
+
     protected function _afterLoad()
     {
         if ($this->count()) {
