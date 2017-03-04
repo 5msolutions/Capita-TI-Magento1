@@ -81,6 +81,16 @@
                     </capita_ti_translate_action>
                 </observers>
             </adminhtml_catalog_product_grid_prepare_massaction>
+
+            <!-- Check if entity is being processed remotely -->
+            <controller_action_layout_render_before_adminhtml_catalog_product_edit>
+                <observers>
+                    <capita_ti_warn>
+                        <class>capita_ti/observer</class>
+                        <method>warnProductInProgress</method>
+                    </capita_ti_warn>
+                </observers>
+            </controller_action_layout_render_before_adminhtml_catalog_product_edit>
         </events>
         <layout>
             <updates>

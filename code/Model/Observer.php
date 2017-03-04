@@ -18,6 +18,34 @@ class Capita_TI_Model_Observer
             ));
     }
 
+    /**
+     * Handler for controller_action_layout_render_before_adminhtml_catalog_product_edit
+     * 
+     * @param Varien_Event_Observer $observer
+     */
+    public function warnProductInProgress(Varien_Event_Observer $observer)
+    {
+        /* @var $product Mage_Catalog_Model_Product */
+        $product = Mage::registry('product');
+        if ($product) {
+            $currentLang = Mage::getStoreConfig('general/locale/code', $product->getStoreId());
+            /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+            $requests = Mage::getResourceModel('capita_ti/request_collection');
+            $requests->addProductFilter($product);
+            $requests->addRemoteFilter();
+            /* @var $request Capita_TI_Model_Request */
+            foreach ($requests as $request) {
+                // if is global or in a target language
+                if (in_array($currentLang, $request->getDestLanguage())) {
+                    Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                        Mage::helper('capita_ti')->__('This product is currently being translated.'));
+                    // only needs one match
+                    break;
+                }
+            }
+        }
+    }
+
     public function cronRefresh(Mage_Cron_Model_Schedule $schedule)
     {
         /* @var $client Capita_TI_Model_Api_Requests */

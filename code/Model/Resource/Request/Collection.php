@@ -114,4 +114,13 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         $this->addFieldToFilter('status', 'importing');
         return $this;
     }
+
+    public function addProductFilter($productId)
+    {
+        if ($productId instanceof Varien_Object) {
+            $productId = $productId->getId();
+        }
+        $this->addFieldToFilter('products.product_id', $productId);
+        return $this;
+    }
 }
