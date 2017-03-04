@@ -48,6 +48,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     {
         $this->loadLayout();
         $this->_checkConnection();
+        Mage::helper('adminhtml')->setPageHelpUrl($this->getUrl('*/capita_help/requests'));
         $this->_title($this->__('Capita Translations'))
             ->_title($this->__('Requests'))
             ->_setActiveMenu(self::MENU_PATH);
