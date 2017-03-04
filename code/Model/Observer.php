@@ -46,8 +46,9 @@ class Capita_TI_Model_Observer
                 $request->setStatus('completed')->save();
             }
             catch (Exception $e) {
-                Mage::logException($e);
                 $request->setStatus('error')->save();
+                // Mage_Cron already has a nice exception logging ability, let it handle this
+                throw $e;
             }
         }
     }
