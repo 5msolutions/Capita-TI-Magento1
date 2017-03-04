@@ -94,13 +94,13 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
     }
 
     /**
-     * Restrict to records with a status != 'completed'
+     * Restrict to records with a status indicating a remote job
      * 
      * @return Capita_TI_Model_Resource_Request_Collection
      */
-    public function addIncompleteFilter()
+    public function addRemoteFilter()
     {
-        $this->addFieldToFilter('status', array('neq' => 'completed'));
+        $this->addFieldToFilter('status', array('in' => array('onHold', 'inProgress')));
         return $this;
     }
 

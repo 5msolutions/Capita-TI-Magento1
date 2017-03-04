@@ -26,7 +26,7 @@ class Capita_TI_Model_Observer
         ));
         /* @var $requests Capita_TI_Model_Resource_Request_Collection */
         $requests = Mage::getResourceModel('capita_ti/request_collection');
-        $requests->addIncompleteFilter();
+        $requests->addRemoteFilter();
         foreach ($requests as $request) {
             if ($request->canUpdate()) {
                 $client->updateRequest($request);
