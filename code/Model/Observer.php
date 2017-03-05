@@ -46,6 +46,51 @@ class Capita_TI_Model_Observer
         }
     }
 
+    /**
+     * Handler for adminhtml_catalog_category_tabs
+     * 
+     * @param Varien_Event_Observer $observer
+     */
+    public function warnCategoryInProgress(Varien_Event_Observer $observer)
+    {
+        /* @var $category Mage_Catalog_Model_Category */
+        $category = Mage::registry('category');
+        if ($category && !$category->isObjectNew()) {
+            $currentLang = Mage::getStoreConfig('general/locale/code', $category->getStoreId());
+            /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+            $requests = Mage::getResourceModel('capita_ti/request_collection');
+            $requests->addCategoryFilter($category);
+//             $requests->addRemoteFilter();
+            /* @var $request Capita_TI_Model_Request */
+            foreach ($requests as $request) {
+                // if is global or in a target language
+                if (in_array($currentLang, $request->getDestLanguage())) {
+                    Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                        Mage::helper('capita_ti')->__('This category is currently being translated.'));
+                    // only needs one match
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Handler for category_prepare_ajax_response
+     * 
+     * If category AJAX messages field is empty then javascript doesn't remove old messages.
+     * Instead, set something benign to replace them.
+     * This might upset other extensions which expect messages to stay.
+     * 
+     * @param Varien_Event_Observer $observer
+     */
+    public function unwarnCategoryInProgress(Varien_Event_Observer $observer)
+    {
+        $response = $observer->getResponse();
+        if ($response->getMessages() === '') {
+            $response->setMessages('<i></i>'); // invisible content
+        }
+    }
+
     public function cronRefresh(Mage_Cron_Model_Schedule $schedule)
     {
         /* @var $client Capita_TI_Model_Api_Requests */

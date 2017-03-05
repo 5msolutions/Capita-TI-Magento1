@@ -17,8 +17,8 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
                 'main_table.request_id=products.request_id',
                 array('product_ids' => 'GROUP_CONCAT(DISTINCT product_id)'))
             ->joinLeft(
-                array('categorys' => $this->getTable('capita_ti/category')),
-                'main_table.request_id=categorys.request_id',
+                array('categories' => $this->getTable('capita_ti/category')),
+                'main_table.request_id=categories.request_id',
                 array('category_ids' => 'GROUP_CONCAT(DISTINCT category_id)'))
             ->joinLeft(
                 array('blocks' => $this->getTable('capita_ti/block')),
@@ -121,6 +121,15 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
             $productId = $productId->getId();
         }
         $this->addFieldToFilter('products.product_id', $productId);
+        return $this;
+    }
+
+    public function addCategoryFilter($categoryId)
+    {
+        if ($categoryId instanceof Varien_Object) {
+            $categoryId = $categoryId->getId();
+        }
+        $this->addFieldToFilter('categories.category_id', $categoryId);
         return $this;
     }
 }

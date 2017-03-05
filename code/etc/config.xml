@@ -91,6 +91,22 @@
                     </capita_ti_warn>
                 </observers>
             </controller_action_layout_render_before_adminhtml_catalog_product_edit>
+            <adminhtml_catalog_category_tabs>
+                <observers>
+                    <capita_ti_warn>
+                        <class>capita_ti/observer</class>
+                        <method>warnCategoryInProgress</method>
+                    </capita_ti_warn>
+                </observers>
+            </adminhtml_catalog_category_tabs>
+            <category_prepare_ajax_response>
+                <observers>
+                    <capita_ti_unwarn>
+                        <class>capita_ti/observer</class>
+                        <method>unwarnCategoryInProgress</method>
+                    </capita_ti_unwarn>
+                </observers>
+            </category_prepare_ajax_response>
         </events>
         <layout>
             <updates>
