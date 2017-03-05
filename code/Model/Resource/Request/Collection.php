@@ -120,7 +120,9 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         if ($productId instanceof Varien_Object) {
             $productId = $productId->getId();
         }
-        $this->addFieldToFilter('products.product_id', $productId);
+        $this->addFieldToFilter(
+            'products.product_id',
+            is_array($productId) ? array('in' => $productId) : $productId);
         return $this;
     }
 

@@ -61,6 +61,24 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Checks an ISO language code against this request's target languages
+     * 
+     * @param string $language
+     * @return boolean
+     */
+    public function hasDestLanguage($language = null)
+    {
+        if (is_null($language)) {
+            return parent::hasDestLanguage();
+        }
+        $destLanguage = $this->getDestLanguage();
+        if (is_string($destLanguage)) {
+            $destLanguage = explode(',', $destLanguage);
+        }
+        return in_array($language, $destLanguage);
+    }
+
+    /**
      * Converts from internal string to array of strings
      * 
      * @return string[]

@@ -35,10 +35,36 @@ class Capita_TI_Model_Observer
             $requests->addRemoteFilter();
             /* @var $request Capita_TI_Model_Request */
             foreach ($requests as $request) {
-                // if is global or in a target language
-                if (in_array($currentLang, $request->getDestLanguage())) {
+                if ($request->hasDestLanguage($currentLang)) {
                     Mage::app()->getLayout()->getMessagesBlock()->addWarning(
                         Mage::helper('capita_ti')->__('This product is currently being translated.'));
+                    // only needs one match
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Handler for controller_action_layout_render_before_adminhtml_catalog_product_action_attribute_edit
+     * 
+     * @param Varien_Event_Observer $observer
+     */
+    public function warnProductsInProgress(Varien_Event_Observer $observer)
+    {
+        $productIds = Mage::getSingleton('adminhtml/session')->getProductIds();
+        $storeId = Mage::app()->getRequest()->getParam('store', Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($productIds) {
+            $currentLang = Mage::getStoreConfig('general/locale/code', $storeId);
+            /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+            $requests = Mage::getResourceModel('capita_ti/request_collection');
+            $requests->addProductFilter($productIds);
+            $requests->addRemoteFilter();
+            /* @var $request Capita_TI_Model_Request */
+            foreach ($requests as $request) {
+                if ($request->hasDestLanguage($currentLang)) {
+                    Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                        Mage::helper('capita_ti')->__('Some of these products are currently being translated.'));
                     // only needs one match
                     break;
                 }
@@ -60,11 +86,10 @@ class Capita_TI_Model_Observer
             /* @var $requests Capita_TI_Model_Resource_Request_Collection */
             $requests = Mage::getResourceModel('capita_ti/request_collection');
             $requests->addCategoryFilter($category);
-//             $requests->addRemoteFilter();
+            $requests->addRemoteFilter();
             /* @var $request Capita_TI_Model_Request */
             foreach ($requests as $request) {
-                // if is global or in a target language
-                if (in_array($currentLang, $request->getDestLanguage())) {
+                if ($request->hasDestLanguage($currentLang)) {
                     Mage::app()->getLayout()->getMessagesBlock()->addWarning(
                         Mage::helper('capita_ti')->__('This category is currently being translated.'));
                     // only needs one match

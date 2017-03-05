@@ -91,6 +91,14 @@
                     </capita_ti_warn>
                 </observers>
             </controller_action_layout_render_before_adminhtml_catalog_product_edit>
+            <controller_action_layout_render_before_adminhtml_catalog_product_action_attribute_edit>
+                <observers>
+                    <capita_ti_warn>
+                        <class>capita_ti/observer</class>
+                        <method>warnProductsInProgress</method>
+                    </capita_ti_warn>
+                </observers>
+            </controller_action_layout_render_before_adminhtml_catalog_product_action_attribute_edit>
             <adminhtml_catalog_category_tabs>
                 <observers>
                     <capita_ti_warn>
