@@ -134,4 +134,39 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         $this->addFieldToFilter('categories.category_id', $categoryId);
         return $this;
     }
+
+    public function addBlockFilter($blockId)
+    {
+        if ($blockId instanceof Varien_Object) {
+            $blockId = $blockId->getId();
+        }
+        $this->addFieldToFilter(
+            'blocks.block_id',
+            is_array($blockId) ? array('in' => $blockId) : $blockId);
+        return $this;
+    }
+
+    public function isTargettingStore($storeIds)
+    {
+        if (is_string($storeIds)) {
+            $storeIds = explode(',', $storeIds);
+        }
+
+        $languages = array();
+        foreach ($storeIds as $storeId) {
+            $languages[] = Mage::getStoreConfig('general/locale/code', $storeId);
+        }
+        $languages = array_unique($languages);
+
+        foreach ($this as $request) {
+            foreach ($languages as $language) {
+                if ($request->hasDestLanguage($language)) {
+                    // only need one match
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

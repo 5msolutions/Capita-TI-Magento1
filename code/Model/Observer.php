@@ -27,20 +27,14 @@ class Capita_TI_Model_Observer
     {
         /* @var $product Mage_Catalog_Model_Product */
         $product = Mage::registry('product');
-        if ($product) {
-            $currentLang = Mage::getStoreConfig('general/locale/code', $product->getStoreId());
+        if ($product && !$product->isObjectNew()) {
             /* @var $requests Capita_TI_Model_Resource_Request_Collection */
             $requests = Mage::getResourceModel('capita_ti/request_collection');
             $requests->addProductFilter($product);
             $requests->addRemoteFilter();
-            /* @var $request Capita_TI_Model_Request */
-            foreach ($requests as $request) {
-                if ($request->hasDestLanguage($currentLang)) {
-                    Mage::app()->getLayout()->getMessagesBlock()->addWarning(
-                        Mage::helper('capita_ti')->__('This product is currently being translated.'));
-                    // only needs one match
-                    break;
-                }
+            if ($requests->isTargettingStore($product->getStoreId())) {
+                Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                    Mage::helper('capita_ti')->__('This product is currently being translated.'));
             }
         }
     }
@@ -55,19 +49,13 @@ class Capita_TI_Model_Observer
         $productIds = Mage::getSingleton('adminhtml/session')->getProductIds();
         $storeId = Mage::app()->getRequest()->getParam('store', Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($productIds) {
-            $currentLang = Mage::getStoreConfig('general/locale/code', $storeId);
             /* @var $requests Capita_TI_Model_Resource_Request_Collection */
             $requests = Mage::getResourceModel('capita_ti/request_collection');
             $requests->addProductFilter($productIds);
             $requests->addRemoteFilter();
-            /* @var $request Capita_TI_Model_Request */
-            foreach ($requests as $request) {
-                if ($request->hasDestLanguage($currentLang)) {
-                    Mage::app()->getLayout()->getMessagesBlock()->addWarning(
-                        Mage::helper('capita_ti')->__('Some of these products are currently being translated.'));
-                    // only needs one match
-                    break;
-                }
+            if ($requests->isTargettingStore($storeId)) {
+                Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                    Mage::helper('capita_ti')->__('Some of these products are currently being translated.'));
             }
         }
     }
@@ -87,14 +75,9 @@ class Capita_TI_Model_Observer
             $requests = Mage::getResourceModel('capita_ti/request_collection');
             $requests->addCategoryFilter($category);
             $requests->addRemoteFilter();
-            /* @var $request Capita_TI_Model_Request */
-            foreach ($requests as $request) {
-                if ($request->hasDestLanguage($currentLang)) {
-                    Mage::app()->getLayout()->getMessagesBlock()->addWarning(
-                        Mage::helper('capita_ti')->__('This category is currently being translated.'));
-                    // only needs one match
-                    break;
-                }
+            if ($requests->isTargettingStore($category->getStoreId())) {
+                Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                    Mage::helper('capita_ti')->__('This category is currently being translated.'));
             }
         }
     }
@@ -113,6 +96,31 @@ class Capita_TI_Model_Observer
         $response = $observer->getResponse();
         if ($response->getMessages() === '') {
             $response->setMessages('<i></i>'); // invisible content
+        }
+    }
+
+    /**
+     * Handler for controller_action_layout_render_before_adminhtml_cms_block_edit
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function warnBlockInProgress(Varien_Event_Observer $observer)
+    {
+        /* @var $block Mage_Cms_Model_Block */
+        $block = Mage::registry('cms_block');
+        if ($block && !$block->isObjectNew()) {
+            /* @var $blocks Mage_Cms_Model_Resource_Block_Collection */
+            $blocks = $block->getCollection();
+            $blocks->addFieldToFilter('identifier', $block->getIdentifier());
+
+            /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+            $requests = Mage::getResourceModel('capita_ti/request_collection');
+            $requests->addBlockFilter($blocks->getAllIds());
+            $requests->addRemoteFilter();
+            if ($requests->isTargettingStore($block->getStoreId())) {
+                Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                    Mage::helper('capita_ti')->__('This block identifier is currently being translated.'));
+            }
         }
     }
 

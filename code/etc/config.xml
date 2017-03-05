@@ -115,6 +115,14 @@
                     </capita_ti_unwarn>
                 </observers>
             </category_prepare_ajax_response>
+            <controller_action_layout_render_before_adminhtml_cms_block_edit>
+                <observers>
+                    <capita_ti_warn>
+                        <class>capita_ti/observer</class>
+                        <method>warnBlockInProgress</method>
+                    </capita_ti_warn>
+                </observers>
+            </controller_action_layout_render_before_adminhtml_cms_block_edit>
         </events>
         <layout>
             <updates>
