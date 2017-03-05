@@ -146,6 +146,17 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         return $this;
     }
 
+    public function addPageFilter($pageId)
+    {
+        if ($pageId instanceof Varien_Object) {
+            $pageId = $pageId->getId();
+        }
+        $this->addFieldToFilter(
+            'pages.page_id',
+            is_array($pageId) ? array('in' => $pageId) : $pageId);
+        return $this;
+    }
+
     public function isTargettingStore($storeIds)
     {
         if (is_string($storeIds)) {

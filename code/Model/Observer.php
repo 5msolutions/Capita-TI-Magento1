@@ -124,6 +124,31 @@ class Capita_TI_Model_Observer
         }
     }
 
+    /**
+     * Handler for controller_action_layout_render_before_adminhtml_cms_page_edit
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function warnPageInProgress(Varien_Event_Observer $observer)
+    {
+        /* @var $page Mage_Cms_Model_Page */
+        $page = Mage::registry('cms_page');
+        if ($page && !$page->isObjectNew()) {
+            /* @var $pages Mage_Cms_Model_Resource_Page_Collection */
+            $pages = $page->getCollection();
+            $pages->addFieldToFilter('identifier', $page->getIdentifier());
+
+            /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+            $requests = Mage::getResourceModel('capita_ti/request_collection');
+            $requests->addPageFilter($pages->getAllIds());
+            $requests->addRemoteFilter();
+            if ($requests->isTargettingStore($page->getStoreId())) {
+                Mage::app()->getLayout()->getMessagesBlock()->addWarning(
+                    Mage::helper('capita_ti')->__('This page identifier is currently being translated.'));
+            }
+        }
+    }
+
     public function cronRefresh(Mage_Cron_Model_Schedule $schedule)
     {
         /* @var $client Capita_TI_Model_Api_Requests */

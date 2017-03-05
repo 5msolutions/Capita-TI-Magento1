@@ -123,6 +123,14 @@
                     </capita_ti_warn>
                 </observers>
             </controller_action_layout_render_before_adminhtml_cms_block_edit>
+            <controller_action_layout_render_before_adminhtml_cms_page_edit>
+                <observers>
+                    <capita_ti_warn>
+                        <class>capita_ti/observer</class>
+                        <method>warnPageInProgress</method>
+                    </capita_ti_warn>
+                </observers>
+            </controller_action_layout_render_before_adminhtml_cms_page_edit>
         </events>
         <layout>
             <updates>
