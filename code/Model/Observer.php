@@ -181,6 +181,7 @@ class Capita_TI_Model_Observer
 
         /* @var $request Capita_TI_Model_Request */
         foreach ($requests as $request) {
+            $reader->setRequest($request);
             try {
                 /* @var $document Capita_TI_Model_Request_Document */
                 foreach ($request->getDocuments() as $document) {

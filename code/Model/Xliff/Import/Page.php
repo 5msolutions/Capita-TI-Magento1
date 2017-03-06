@@ -1,6 +1,6 @@
 <?php
 
-class Capita_TI_Model_Xliff_Import_Page implements Capita_TI_Model_Xliff_Import_Interface
+class Capita_TI_Model_Xliff_Import_Page extends Capita_TI_Model_Xliff_Import_Abstract
 {
 
     public function getEntityType()
@@ -10,6 +10,18 @@ class Capita_TI_Model_Xliff_Import_Page implements Capita_TI_Model_Xliff_Import_
 
     public function import($id, $sourceLanguage, $destLanguage, $sourceData, $destData)
     {
+        if ($this->getRequest()) {
+            if (!in_array($id, $this->getRequest()->getPageIds())) {
+                // prevent accidentally importing data which shouldn't be
+                // perhaps it wasn't requested or the page was deleted afterwards
+                return;
+            }
+            if (strpos($destLanguage, $this->getRequest()->getDestLanguage()) === false) {
+                // was not expecting this language
+                return;
+            }
+        }
+
         /* @var $origPage Mage_Cms_Model_Page */
         $origPage = Mage::getModel('cms/page')->load($id);
         if ($identifier = $origPage->getIdentifier()) {

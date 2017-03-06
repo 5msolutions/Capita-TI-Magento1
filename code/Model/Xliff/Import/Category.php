@@ -1,6 +1,6 @@
 <?php
 
-class Capita_TI_Model_Xliff_Import_Category implements Capita_TI_Model_Xliff_Import_Interface
+class Capita_TI_Model_Xliff_Import_Category extends Capita_TI_Model_Xliff_Import_Abstract
 {
 
     public function getEntityType()
@@ -10,6 +10,18 @@ class Capita_TI_Model_Xliff_Import_Category implements Capita_TI_Model_Xliff_Imp
 
     public function import($id, $sourceLanguage, $destLanguage, $sourceData, $destData)
     {
+        if ($this->getRequest()) {
+            if (!in_array($id, $this->getRequest()->getCategoryIds())) {
+                // prevent accidentally importing data which shouldn't be
+                // perhaps it wasn't requested or the category was deleted afterwards
+                return;
+            }
+            if (strpos($destLanguage, $this->getRequest()->getDestLanguage()) === false) {
+                // was not expecting this language
+                return;
+            }
+        }
+
         /* @var $store Mage_Core_Model_Store */
         foreach (Mage::app()->getStores() as $store) {
             $code = (string) $store->getConfig('general/locale/code');

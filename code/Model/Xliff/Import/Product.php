@@ -1,6 +1,6 @@
 <?php
 
-class Capita_TI_Model_Xliff_Import_Product implements Capita_TI_Model_Xliff_Import_Interface
+class Capita_TI_Model_Xliff_Import_Product extends Capita_TI_Model_Xliff_Import_Abstract
 {
 
     public function getEntityType()
@@ -10,6 +10,18 @@ class Capita_TI_Model_Xliff_Import_Product implements Capita_TI_Model_Xliff_Impo
 
     public function import($id, $sourceLanguage, $destLanguage, $sourceData, $destData)
     {
+        if ($this->getRequest()) {
+            if (!in_array($id, $this->getRequest()->getProductIds())) {
+                // prevent accidentally importing data which shouldn't be
+                // perhaps it wasn't requested or the product was deleted afterwards
+                return;
+            }
+            if (strpos($destLanguage, $this->getRequest()->getDestLanguage()) === false) {
+                // was not expecting this language
+                return;
+            }
+        }
+
         /* @var $action Mage_Catalog_Model_Product_Action */
         $action = Mage::getModel('catalog/product_action');
 

@@ -3,7 +3,19 @@
 class Capita_TI_Model_Xliff_Reader
 {
 
+    /**
+     * Each import type handles a specific entity type
+     * 
+     * @var Capita_TI_Model_Xliff_Import_Abstract[]
+     */
     protected $_types;
+
+    /**
+     * An additional hint for importers to know where to save data
+     * 
+     * @var Capita_TI_Model_Request
+     */
+    protected $_request;
 
     /**
      * Register an importer to be matched to each entity tpe
@@ -12,7 +24,7 @@ class Capita_TI_Model_Xliff_Reader
      * @param string $model
      * @return Capita_TI_Model_Xliff_Reader
      */
-    public function addType(Capita_TI_Model_Xliff_Import_Interface $type)
+    public function addType(Capita_TI_Model_Xliff_Import_Abstract $type)
     {
         $this->_types[$type->getEntityType()] = $type;
         return $this;
@@ -22,11 +34,23 @@ class Capita_TI_Model_Xliff_Reader
      * Retrieve a specific type importer
      * 
      * @param string $type
-     * @return Capita_TI_Model_Xliff_Import_Interface|null
+     * @return Capita_TI_Model_Xliff_Import_Abstract|null
      */
     public function getImporter($type)
     {
         return isset($this->_types[$type]) ? $this->_types[$type] : null;
+    }
+
+    /**
+     * Optionally set a request to be passed to importers in the following import() calls
+     * 
+     * @param Capita_TI_Model_Request $request
+     * @return Capita_TI_Model_Xliff_Reader
+     */
+    public function setRequest(Capita_TI_Model_Request $request)
+    {
+        $this->_request = $request;
+        return $this;
     }
 
     public function import($uri, $language = null)
@@ -82,6 +106,7 @@ class Capita_TI_Model_Xliff_Reader
             $id == '';
         }
         $importer = $this->getImporter($origin) or $this->__('Unrecognised file origin: "%s"', $origin);
+        $importer->setRequest($this->_request);
 
         $this->_nextElement($xml) or $this->__('File element has no body');
 
