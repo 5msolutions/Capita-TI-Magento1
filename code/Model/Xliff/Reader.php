@@ -106,7 +106,9 @@ class Capita_TI_Model_Xliff_Reader
             $id == '';
         }
         $importer = $this->getImporter($origin) or $this->__('Unrecognised file origin: "%s"', $origin);
-        $importer->setRequest($this->_request);
+        if ($this->_request) {
+            $importer->setRequest($this->_request);
+        }
 
         $this->_nextElement($xml) or $this->__('File element has no body');
 
@@ -135,6 +137,7 @@ class Capita_TI_Model_Xliff_Reader
         }
         $importer->import($id, $sourceLanguage, $destLanguage, $sourceData, $destData);
 
+        while ($xml->read() && $xml->name != 'file');
         return true;
     }
 
