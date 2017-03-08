@@ -8,8 +8,11 @@ class Capita_TI_Model_Source_Category_Attributes
         /* @var $attributes Mage_Catalog_Model_Resource_Category_Attribute_Collection */
         $attributes = Mage::getResourceModel('catalog/category_attribute_collection')
             ->addFieldToFilter('main_table.frontend_input', array('in' => array('text', 'textarea')))
-            ->addFieldToFilter('main_table.frontend_model', array('eq' => ''))
-            ->addFieldToFilter('main_table.backend_model', array('eq' => ''))
+            ->addFieldToFilter('main_table.backend_type', array('in' => array('text', 'varchar')))
+            ->addFieldToFilter('main_table.backend_model', array(
+                array('eq' => ''),
+                array('null' => true)
+            ))
             ->addFieldToFilter('additional_table.is_global', 0);
         return $attributes;
     }
