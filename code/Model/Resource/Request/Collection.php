@@ -159,8 +159,17 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
 
     public function isTargettingStore($storeIds)
     {
+        // if no stores specified then we don't care and any store is valid
+        // assume any request matches
+        if (!$storeIds) {
+            return $this->count() > 0;
+        }
+
         if (is_string($storeIds)) {
             $storeIds = explode(',', $storeIds);
+        }
+        else {
+            $storeIds = (array) $storeIds;
         }
 
         $languages = array();
