@@ -16,7 +16,7 @@ class Capita_TI_Model_Xliff_Import_Page extends Capita_TI_Model_Xliff_Import_Abs
                 // perhaps it wasn't requested or the page was deleted afterwards
                 return;
             }
-            if (strpos($destLanguage, $this->getRequest()->getDestLanguage()) === false) {
+            if (!in_array($destLanguage, $this->getRequest()->getDestLanguage())) {
                 // was not expecting this language
                 return;
             }

@@ -16,7 +16,7 @@ class Capita_TI_Model_Xliff_Import_Product extends Capita_TI_Model_Xliff_Import_
                 // perhaps it wasn't requested or the product was deleted afterwards
                 return;
             }
-            if (strpos($destLanguage, $this->getRequest()->getDestLanguage()) === false) {
+            if (!in_array($destLanguage, $this->getRequest()->getDestLanguage())) {
                 // was not expecting this language
                 return;
             }
