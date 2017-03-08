@@ -7,6 +7,7 @@ class Capita_TI_Model_Source_Cron
     {
         $helper = Mage::helper('capita_ti');
         return array(
+            0 => $helper->__('Manually'),
             5 => $helper->__('Every 5 minutes'),
             60 => $helper->__('Each hour'),
             1440 => $helper->__('Each night'),
