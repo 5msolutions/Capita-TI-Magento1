@@ -115,6 +115,20 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         return $this;
     }
 
+    /**
+     * Restrict to records no longer required and at least 1 day old
+     * 
+     * @return Capita_TI_Model_Resource_Request_Collection
+     */
+    public function addExpiredFilter()
+    {
+        $this->addFieldToFilter('status', array('in' => array('completed', 'error')));
+        $date = Zend_Date::now();
+        $date->subDay(1);
+        $this->addFieldToFilter('updated_at', array('lt' => $this->formatDate($date)));
+        return $this;
+    }
+
     public function addProductFilter($productId)
     {
         if ($productId instanceof Varien_Object) {

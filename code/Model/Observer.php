@@ -200,4 +200,16 @@ class Capita_TI_Model_Observer
             }
         }
     }
+
+    public function cronPurge(Mage_Cron_Model_Schedule $schedule)
+    {
+        /* @var $requests Capita_TI_Model_Resource_Request_Collection */
+        $requests = Mage::getResourceModel('capita_ti/request_collection');
+        $requests->addExpiredFilter();
+        foreach ($requests as $request) {
+            if ($request->canDelete()) {
+                $request->delete();
+            }
+        }
+    }
 }

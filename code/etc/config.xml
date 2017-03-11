@@ -171,6 +171,11 @@
                         <model>capita_ti/observer::cronImport</model>
                     </run>
                 </capita_ti_import>
+                <capita_ti_purge>
+                    <run>
+                        <model>capita_ti/observer::cronPurge</model>
+                    </run>
+                </capita_ti_purge>
             </jobs>
         </crontab>
 
@@ -181,7 +186,8 @@
             <scheduling>
                 <refresh>hourly</refresh>
                 <import>always</import>
-                <export>1440</export>
+                <export>never</export>
+                <purge>never</purge>
             </scheduling>
             <products>
                 <attributes>description,image_label,meta_description,meta_keyword,meta_title,name,short_description,small_image_label,thumbnail_label</attributes>
