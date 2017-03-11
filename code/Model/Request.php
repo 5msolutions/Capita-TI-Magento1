@@ -180,7 +180,8 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
      */
     public function canUpdate()
     {
-        return $this->getRemoteId() && in_array($this->getStatus(), array('onHold', 'inProgress'));
+        // error isn't a remote status but updating can help overcome it
+        return $this->getRemoteId() && in_array($this->getStatus(), array('onHold', 'inProgress', 'error'));
     }
 
     /**
