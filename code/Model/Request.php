@@ -13,6 +13,7 @@
  * @method string getCategoryAttributes()
  * @method string getProductAttributes()
  * @method string getSourceLanguage()
+ * @method string getStatus()
  * @method Capita_TI_Model_Request_Document[] getDocuments()
  * @method Capita_TI_Model_Request setProductIds(int[])
  * @method Capita_TI_Model_Request setSourceLanguage(string)
@@ -171,6 +172,16 @@ class Capita_TI_Model_Request extends Mage_Core_Model_Abstract
     public function getStatusLabel()
     {
         return Mage::getSingleton('capita_ti/source_status')->getOptionLabel($this->getStatus());
+    }
+
+    /**
+     * True if request is not waiting on remote action
+     * 
+     * @return boolean
+     */
+    public function canDelete()
+    {
+        return !in_array($this->getStatus(), array('onHold', 'inProgress'));
     }
 
     /**

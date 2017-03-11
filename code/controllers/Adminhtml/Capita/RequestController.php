@@ -104,6 +104,24 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         $this->renderLayout();
     }
 
+    public function deleteAction()
+    {
+        try {
+            $requestId = $this->getRequest()->getParam('id');
+            /* @var $request Capita_TI_Model_Request */
+            $request = Mage::getModel('capita_ti/request')->load($requestId);
+            if (!$request->isObjectNew() && $request->canDelete()) {
+                $request->delete();
+                $this->_getSession()->addSuccess($this->__('Request "%s" has been deleted', $request->getRemoteNo()));
+            }
+        }
+        catch (Exception $e) {
+            Mage::logException($e);
+            $this->_getSession()->addError($e->getMessage());
+        }
+        $this->_redirect('*/*');
+    }
+
     public function saveAction()
     {
         try {
