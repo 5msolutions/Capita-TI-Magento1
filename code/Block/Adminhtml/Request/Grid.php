@@ -62,7 +62,7 @@ class Capita_TI_Block_Adminhtml_Request_Grid extends Mage_Adminhtml_Block_Widget
 			'index' => 'created_at',
 			'header' => $this->__('Submission Date'),
 		    'type' => 'datetime',
-			'width' => '100px'
+			'width' => '150px'
 		));
 		$this->addColumn('status', array(
 			'index' => 'status',

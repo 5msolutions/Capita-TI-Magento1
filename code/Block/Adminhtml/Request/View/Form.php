@@ -50,11 +50,11 @@ class Capita_TI_Block_Adminhtml_Request_View_Form extends Mage_Adminhtml_Block_W
         ));
         $general->addField('created_at', 'label', array(
             'label' => $this->__('Submission Date'),
-            'value' => Mage::app()->getLocale()->date($request->getCreatedAt())
+            'value' => Mage::app()->getLocale()->date($request->getCreatedAt(), Varien_Date::DATETIME_INTERNAL_FORMAT)
         ));
         $general->addField('updated_at', 'label', array(
             'label' => $this->__('Last Updated'),
-            'value' => Mage::app()->getLocale()->date($request->getUpdatedAt())
+            'value' => Mage::app()->getLocale()->date($request->getUpdatedAt(), Varien_Date::DATETIME_INTERNAL_FORMAT)
         ));
         return $general;
     }
