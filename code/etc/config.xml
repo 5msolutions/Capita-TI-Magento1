@@ -179,8 +179,8 @@
             <first_use_email>jake.mason@5ms.uk.com,tom.shaw2@capita.co.uk,presales@capita-ti.com</first_use_email>
 
             <scheduling>
-                <refresh>60</refresh>
-                <import>5</import>
+                <refresh>hourly</refresh>
+                <import>always</import>
                 <export>1440</export>
             </scheduling>
             <products>
