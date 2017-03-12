@@ -156,4 +156,39 @@ class Capita_TI_Model_Tracker
             $this->blockSaveAfter($observer);
         }
     }
+
+    public function endWatch(Capita_TI_Model_Request $request)
+    {
+        if ($request->getProductIds() && $request->getProductAttributes()) {
+            $this->deleteRecords(
+                'capita_ti/product_diff',
+                array(
+                    'entity_id' => $request->getProductIds(),
+                    'attribute' => $request->getProductAttributesArray()
+                ));
+        }
+        if ($request->getCategoryIds() && $request->getCategoryAttributes()) {
+            $this->deleteRecords(
+                'capita_ti/category_diff',
+                array(
+                    'entity_id' => $request->getCategoryIds(),
+                    'attribute' => $request->getCategoryAttributesArray()
+                ));
+        }
+        if ($request->getBlockIds()) {
+            $this->deleteRecords(
+                'capita_ti/block_diff',
+                array(
+                    'block_id' => $request->getBlockIds()
+                ));
+        }
+        if ($request->getPageIds()) {
+            $this->deleteRecords(
+                'capita_ti/page_diff',
+                array(
+                    'page_id' => $request->getPageIds()
+                ));
+        }
+        return $this;
+    }
 }

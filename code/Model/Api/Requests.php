@@ -127,6 +127,8 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         foreach ($filenames as $filename) {
             $newRequest->addLocalDocument('export'.DS.$filename);
         }
+        // remove notice of changed fields now that they're being translated
+        Mage::getSingleton('capita_ti/tracker')->endWatch($newRequest);
         return $newRequest;
     }
 
