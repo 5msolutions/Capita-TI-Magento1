@@ -3,7 +3,7 @@
 class Capita_TI_Model_Source_Category_Attributes
 {
 
-    protected function getBestAttributes()
+    public function getBestAttributes()
     {
         /* @var $attributes Mage_Catalog_Model_Resource_Category_Attribute_Collection */
         $attributes = Mage::getResourceModel('catalog/category_attribute_collection')

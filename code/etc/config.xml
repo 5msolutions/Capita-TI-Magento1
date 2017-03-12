@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Capita_TI>
-            <version>0.2.2</version>
+            <version>0.3.0</version>
         </Capita_TI>
     </modules>
 
@@ -46,6 +46,18 @@
                     <attribute>
                         <table>capita_ti_attribute</table>
                     </attribute>
+                    <block_diff>
+                        <table>capita_ti_block_diff</table>
+                    </block_diff>
+                    <category_diff>
+                        <table>capita_ti_category_diff</table>
+                    </category_diff>
+                    <page_diff>
+                        <table>capita_ti_page_diff</table>
+                    </page_diff>
+                    <product_diff>
+                        <table>capita_ti_product_diff</table>
+                    </product_diff>
                 </entities>
             </capita_ti_resource>
         </models>
@@ -131,6 +143,40 @@
                     </capita_ti_warn>
                 </observers>
             </controller_action_layout_render_before_adminhtml_cms_page_edit>
+
+            <!-- Track content changes -->
+            <model_save_after>
+                <observers>
+                    <capita_ti_track>
+                        <class>capita_ti/tracker</class>
+                        <method>modelSaveAfter</method>
+                    </capita_ti_track>
+                </observers>
+            </model_save_after>
+            <catalog_category_save_after>
+                <observers>
+                    <capita_ti_track>
+                        <class>capita_ti/tracker</class>
+                        <method>categorySaveAfter</method>
+                    </capita_ti_track>
+                </observers>
+            </catalog_category_save_after>
+            <cms_page_save_after>
+                <observers>
+                    <capita_ti_track>
+                        <class>capita_ti/tracker</class>
+                        <method>pageSaveAfter</method>
+                    </capita_ti_track>
+                </observers>
+            </cms_page_save_after>
+            <catalog_product_save_after>
+                <observers>
+                    <capita_ti_track>
+                        <class>capita_ti/tracker</class>
+                        <method>productSaveAfter</method>
+                    </capita_ti_track>
+                </observers>
+            </catalog_product_save_after>
         </events>
         <layout>
             <updates>
