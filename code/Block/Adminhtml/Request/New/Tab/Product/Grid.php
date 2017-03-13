@@ -102,16 +102,17 @@ extends Mage_Adminhtml_Block_Widget_Grid
             'status',
             'visibility'
         ));
-        $this->setCollection($collection);
-        parent::_prepareCollection(); // filters are parsed here
-
-        $in_products = $this->getColumn('in_products')->getFilter()->getValue();
+        $filter = $this->getParam($this->getVarNameFilter(), null);
+        $filterData = is_null($filter) ? $this->_defaultFilter : $this->helper('adminhtml')->prepareFilterString($filter);
+        $in_products = @$filterData['in_products'];
+        // 0 = No, 1 = Yes, NULL = Any
+        // need to filter on No and Yes
         if (!is_null($in_products) && $this->getProductIds()) {
-            $collection->clear()->addAttributeToFilter(
-                'entity_id',
-                array($in_products ? 'in' : 'nin' => $this->getProductIds()));
+            $collection->addIdFilter($this->getProductIds(), !$in_products);
         }
-        return $this;
+        $this->setCollection($collection);
+
+        return parent::_prepareCollection();
     }
 
     public function getGridUrl()
