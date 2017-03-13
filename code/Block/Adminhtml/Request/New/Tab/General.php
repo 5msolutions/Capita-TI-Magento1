@@ -31,32 +31,22 @@ implements Mage_Adminhtml_Block_Widget_Tab_Interface
         $fieldset = $form->addFieldset('general', array(
             'legend' => $this->__('General')
         ));
-        $locales = Mage::helper('capita_ti')->getStoreLocalesOptions();
-        $defaultLocale = Mage::app()->getDefaultStoreView()->getConfig('general/locale/code');
+        $locales = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse();
+        $defaultLocale = Mage::getStoreConfig('general/locale/code');
 
-        $fieldset->addField('source_language', 'select', array(
-            'name' => 'source_language',
+        $fieldset->addField('source_language', 'label', array(
             'label' => $this->__('Source Language'),
-            'required' => true,
-            'values' => $locales,
-            'value' => $defaultLocale
+            'value' => @$locales[$defaultLocale]
         ));
+
+        unset($locales[$defaultLocale]);
         $fieldset->addField('dest_language', 'multiselect', array(
             'name' => 'dest_language',
-            'label' => $this->__('Requested Languages'),
+            'label' => $this->__('Target Languages'),
             'required' => true,
-            'values' => $locales
-        ))
-        ->setAfterElementHtml('<script type="text/javascript">
-            (function(){
-            var autoable = function(event) {
-                $$("#dest_language option").invoke("writeAttribute","disabled",null);
-                $$("#dest_language option[value="+$F(this)+"]").invoke("writeAttribute","disabled","disabled");
-            };
-            Event.observe("source_language", "change", autoable);
-            autoable.call("source_language");
-            })();
-            </script>');
+            'values' => $this->helper('capita_ti')->convertHashToOptions($locales),
+            'value' => array_keys($locales)
+        ));
 
         $this->setForm($form);
         return parent::_prepareForm();

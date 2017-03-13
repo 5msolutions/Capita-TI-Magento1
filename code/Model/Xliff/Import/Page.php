@@ -28,14 +28,7 @@ class Capita_TI_Model_Xliff_Import_Page extends Capita_TI_Model_Xliff_Import_Abs
             // do not change original page
             // create new page only for targetted stores and retire old one from those stores
 
-            // find all stores which use target language
-            $destStores = array();
-            /* @var $store Mage_Core_Model_Store */
-            foreach (Mage::app()->getStores() as $store) {
-                if ($destLanguage == $store->getConfig('general/locale/code')) {
-                    $destStores[] = $store->getId();
-                }
-            }
+            $destStores = Mage::helper('capita_ti')->getStoreIdsByLanguage($destLanguage);
             $newStores = $destStores;
 
             /* @var $transaction Mage_Core_Model_Resource_Transaction */

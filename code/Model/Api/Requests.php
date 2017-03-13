@@ -36,7 +36,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
      */
     public function startNewRequest(Zend_Controller_Request_Abstract $input)
     {
-        $sourceLanguage = $input->getParam('source_language');
+        $sourceLanguage = $input->getParam('source_language', Mage::getStoreConfig('general/locale/code'));
         $destLanguage = implode(',', $input->getParam('dest_language'));
         $this->setParameterPost('CustomerName', $this->getCustomerName());
         $this->setParameterPost('ContactName', $this->getContactName());
@@ -77,6 +77,11 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         /* @var $pages Mage_Cms_Model_Resource_Page_Collection */
         $pages = Mage::getResourceModel('cms/page_collection');
         $pages->addFieldToFilter('page_id', array('in' => $pageIds));
+
+        if (!$productIds && !$categoryIds && !$blockIds && !$pageIds) {
+            throw new InvalidArgumentException(
+                Mage::helper('capita_ti')->__('Must specify at least one product, category, block or page'));
+        }
 
         /* @var $newRequest Capita_TI_Model_Request */
         $newRequest = Mage::getModel('capita_ti/request');

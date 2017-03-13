@@ -29,9 +29,8 @@ implements Mage_Adminhtml_Block_Widget_Tab_Interface
     {
         $form = new Varien_Data_Form();
         /* @var $collection Mage_Cms_Model_Resource_Page_Collection */
-        $collection = Mage::helper('capita_ti')->getCmsPagesWithLanguages();
-        $languagesJson = $this->helper('capita_ti')->jsonEncode(
-            array_filter($collection->walk('getLanguages')));
+        $collection = Mage::helper('capita_ti')->getCmsPagesByLanguage(Mage::getStoreConfig('general/locale/code'));
+
         $options = array();
         foreach ($collection as $page) {
             $options[] = array(
@@ -46,27 +45,9 @@ implements Mage_Adminhtml_Block_Widget_Tab_Interface
         $fieldset->addField('page_ids', 'multiselect', array(
             'name' => 'page_ids',
             'label' => $this->__('CMS Pages'),
-            'note' => $this->__('Only pages that match the source language can be selected.'),
             'values' => $options,
             'value' => $this->getPageIds()
-        ))
-        ->setAfterElementHtml('<script type="text/javascript">
-            (function(){
-            var autoable = function(event) {
-                var lang = $F(this);
-                $$("#page_ids option").each(function(option) {
-                    var langs = '.$languagesJson.'[option.value];
-                    if (langs) {
-                        option.writeAttribute("disabled", langs.indexOf(lang) >= 0 ? null : "disabled");
-                    }
-                    // else pages without definite language are ignored
-                });
-            };
-            Event.observe("source_language", "change", autoable);
-            autoable.call("source_language");
-            })();
-            </script>')
-                    ;
+        ));
 
         $this->setForm($form);
         return parent::_prepareForm();

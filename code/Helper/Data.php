@@ -25,62 +25,33 @@ class Capita_TI_Helper_Data extends Mage_Core_Helper_Data
         return $options;
     }
 
-    /**
-     * Get used locales in options/values format
-     * 
-     * @return array
-     */
-    public function getStoreLocalesOptions()
+    public function getStoreIdsByLanguage($language)
     {
-        $languages = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse();
-        return $this->convertHashToOptions($languages);
+        $stores = array();
+        /* @var $store Mage_Core_Model_Store */
+        foreach (Mage::app()->getStores() as $store) {
+            if ($language == $store->getConfig('general/locale/code')) {
+                $stores[] = $store->getId();
+            }
+        }
+        return $stores;
     }
 
-    /**
-     * Assign locale codes to CMS block objects
-     * 
-     * Blocks with global scope have ambiguous languages so nothing is added
-     * 
-     * @return Mage_Cms_Model_Resource_Block_Collection
-     */
-    public function getCmsBlocksWithLanguages()
+    public function getCmsBlocksByLanguage($language)
     {
+        $stores = $this->getStoreIdsByLanguage($language);
+        /* @var $blocks Mage_Cms_Model_Resource_Block_Collection */
         $blocks = Mage::getModel('cms/block')->getCollection();
-        /* @var $block Mage_Cms_Model_Block */
-        foreach ($blocks as $id => $block) {
-            $stores = $block->getResource()->lookupStoreIds($id);
-            if (!$stores || ($stores == array(0))) continue;
-
-            $languages = array();
-            foreach ($stores as $store) {
-                $languages[] = Mage::getStoreConfig('general/locale/code', $store);
-            }
-            $block->setLanguages(array_unique($languages));
-        }
+        $blocks->addStoreFilter($stores);
         return $blocks;
     }
 
-    /**
-     * Assign locale codes to CMS page objects
-     * 
-     * Pages with global scope have ambiguous languages so nothing is added
-     * 
-     * @return Mage_Cms_Model_Resource_Page_Collection
-     */
-    public function getCmsPagesWithLanguages()
+    public function getCmsPagesByLanguage($language)
     {
+        $stores = $this->getStoreIdsByLanguage($language);
+        /* @var $pages Mage_Cms_Model_Resource_Page_Collection */
         $pages = Mage::getModel('cms/page')->getCollection();
-        /* @var $page Mage_Cms_Model_Page */
-        foreach ($pages as $id => $page) {
-            $stores = $page->getResource()->lookupStoreIds($id);
-            if (!$stores || ($stores == array(0))) continue;
-
-            $languages = array();
-            foreach ($stores as $store) {
-                $languages[] = Mage::getStoreConfig('general/locale/code', $store);
-            }
-            $page->setLanguages(array_unique($languages));
-        }
+        $pages->addStoreFilter($stores);
         return $pages;
     }
 }
