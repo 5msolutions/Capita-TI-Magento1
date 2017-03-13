@@ -115,37 +115,60 @@ class Capita_TI_Model_Tracker
 
     public function blockSaveAfter(Varien_Event_Observer $observer)
     {
-        $this->watchEntity(
-            'capita_ti/block_diff',
-            $observer->getObject(),
-            array('title', 'content'));
-        return $this;
+        /* @var $block Mage_Cms_Model_Block */
+        $block = $observer->getObject();
+        $stores = array(
+            Mage_Core_Model_App::ADMIN_STORE_ID,
+            Mage::app()->getDefaultStoreView()->getId()
+        );
+        if ($block && array_intersect($block->getStores(), $stores)) {
+            $this->watchEntity(
+                'capita_ti/block_diff',
+                $block,
+                array('title', 'content'));
+            return $this;
+        }
     }
 
     public function categorySaveAfter(Varien_Event_Observer $observer)
     {
-        $attributes = Mage::getSingleton('capita_ti/source_category_attributes')->getBestAttributes();
-        $this->watchEntity(
-            'capita_ti/category_diff',
-            $observer->getCategory(),
-            $attributes->getColumnValues('attribute_code'));
+        $category = $observer->getCategory();
+        if ($category && !$category->getStoreId()) {
+            $attributes = Mage::getSingleton('capita_ti/source_category_attributes')->getBestAttributes();
+            $this->watchEntity(
+                'capita_ti/category_diff',
+                $observer->getCategory(),
+                $attributes->getColumnValues('attribute_code'));
+        }
     }
 
     public function pageSaveAfter(Varien_Event_Observer $observer)
     {
-        $this->watchEntity(
-            'capita_ti/page_diff',
-            $observer->getObject(),
-            array('title', 'meta_keywords', 'meta_description', 'content_heading', 'content'));
+        /* @var $page Mage_Cms_Model_Page */
+        $page = $observer->getObject();
+        $stores = array(
+            Mage_Core_Model_App::ADMIN_STORE_ID,
+            Mage::app()->getDefaultStoreView()->getId()
+        );
+        if ($page && array_intersect($page->getStores(), $stores)) {
+            $this->watchEntity(
+                'capita_ti/page_diff',
+                $observer->getObject(),
+                array('title', 'meta_keywords', 'meta_description', 'content_heading', 'content'));
+        }
     }
 
     public function productSaveAfter(Varien_Event_Observer $observer)
     {
-        $attributes = Mage::getSingleton('capita_ti/source_product_attributes')->getBestAttributes();
-        $this->watchEntity(
-            'capita_ti/product_diff',
-            $observer->getProduct(),
-            $attributes->getColumnValues('attribute_code'));
+        $product = $observer->getProduct();
+        // only changes in global scope
+        if ($product && !$product->getStoreId()) {
+            $attributes = Mage::getSingleton('capita_ti/source_product_attributes')->getBestAttributes();
+            $this->watchEntity(
+                'capita_ti/product_diff',
+                $product,
+                $attributes->getColumnValues('attribute_code'));
+        }
     }
 
     public function modelSaveAfter(Varien_Event_Observer $observer)
