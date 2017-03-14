@@ -36,6 +36,15 @@ extends Mage_Adminhtml_Block_Widget_Grid
             'index'             => 'entity_id'
         ));
 
+        $this->addColumn('translated', array(
+            'header' => $this->__('Translated'),
+            'type' => 'text',
+            'filter' => 'capita_ti/adminhtml_column_filter_languages',
+            'renderer' => 'capita_ti/adminhtml_column_renderer_languages',
+            'width' => 100,
+            'index' => 'translated'
+        ));
+
         $this->addColumn('entity_id', array(
             'header' => $this->__('ID'),
             'type' => 'number',
@@ -95,8 +104,8 @@ extends Mage_Adminhtml_Block_Widget_Grid
 
     protected function _prepareCollection()
     {
-        /* @var $collection Mage_Catalog_Model_Resource_Product_Collection */
-        $collection = Mage::getResourceModel('catalog/product_collection');
+        /* @var $collection Capita_TI_Model_Resource_Product_Collection */
+        $collection = Mage::getResourceModel('capita_ti/product_collection');
         $collection->addAttributeToSelect(array(
             'name',
             'status',

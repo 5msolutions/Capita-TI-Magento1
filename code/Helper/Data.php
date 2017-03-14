@@ -25,16 +25,23 @@ class Capita_TI_Helper_Data extends Mage_Core_Helper_Data
         return $options;
     }
 
-    public function getStoreIdsByLanguage($language)
+    /**
+     * Get list of store IDs that use the given locale code
+     * 
+     * If $language is NULL then return 2D array keyed by locale code instead.
+     * 
+     * @param string $language
+     * @return array
+     */
+    public function getStoreIdsByLanguage($language = null)
     {
         $stores = array();
         /* @var $store Mage_Core_Model_Store */
         foreach (Mage::app()->getStores() as $store) {
-            if ($language == $store->getConfig('general/locale/code')) {
-                $stores[] = $store->getId();
-            }
+            $storeLang = $store->getConfig('general/locale/code');
+            $stores[$storeLang][] = $store->getId();
         }
-        return $stores;
+        return $language ? (array) @$stores[$language] : $stores;
     }
 
     public function getCmsBlocksByLanguage($language)
