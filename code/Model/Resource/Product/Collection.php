@@ -3,24 +3,43 @@
 class Capita_TI_Model_Resource_Product_Collection extends Mage_Catalog_Model_Resource_Product_Collection
 {
 
+    protected function _getTranslatableAttributeIds()
+    {
+        $attrCodes = explode(',', Mage::getStoreConfig('capita_ti/products/attributes'));
+        $attrIds = array();
+        $config = Mage::getSingleton('eav/config');
+        foreach ($attrCodes as $attrCode) {
+            $attrIds[] = (int) $config->getAttribute('catalog_product', $attrCode)->getId();
+        }
+        return $attrIds;
+    }
+
     protected function _initSelect()
     {
         parent::_initSelect();
         $entityTable = $this->getEntity()->getEntityTable();
         $configTable = $this->getTable('core/config_data');
+        $attributes = $this->_getTranslatableAttributeIds();
+        $diffTable = $this->getTable('capita_ti/product_diff');
 
         // each subquery maps entity IDs to locale codes
         // TODO select media_gallery and media_gallery_value
         $textSelect = $this->getConnection()->select()
             ->distinct()
-            ->from($entityTable.'_text', 'entity_id')
-            ->join($configTable, '(scope_id=store_id) AND (path="general/locale/code")', 'value')
-            ->where('store_id > 0');
+            ->from(array('values' => $entityTable.'_text'), 'entity_id')
+            ->join(array('config' => $configTable), '(scope_id=store_id) AND (path="general/locale/code")', 'value')
+            ->joinLeft(array('diff' => $diffTable), '(diff.entity_id=values.entity_id)', '')
+            ->where('store_id > 0')
+            ->where('attribute_id IN (?)', $attributes)
+            ->where('old_md5 IS NULL');
         $varcharSelect = $this->getConnection()->select()
             ->distinct()
-            ->from($entityTable.'_varchar', 'entity_id')
-            ->join($configTable, '(scope_id=store_id) AND (path="general/locale/code")', 'value')
-            ->where(('store_id > 0'));
+            ->from(array('values' => $entityTable.'_varchar'), 'entity_id')
+            ->join(array('config' => $configTable), '(scope_id=store_id) AND (path="general/locale/code")', 'value')
+            ->joinLeft(array('diff' => $diffTable), '(diff.entity_id=values.entity_id)', '')
+            ->where('store_id > 0')
+            ->where('attribute_id IN (?)', $attributes)
+            ->where('old_md5 IS NULL');
         // subqueries have the same columns so can be unioned
         // UNION ALL is fastest option
         $unionSelect = $this->getConnection()->select()
