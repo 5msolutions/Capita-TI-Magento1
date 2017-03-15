@@ -1,7 +1,7 @@
 <?php
 
 class Capita_TI_Block_Adminhtml_Request_New_Tab_Categories
-extends Mage_Adminhtml_Block_Widget_Form
+extends Mage_Adminhtml_Block_Text_List
 implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
 
@@ -25,30 +25,12 @@ implements Mage_Adminhtml_Block_Widget_Tab_Interface
         return false;
     }
 
-    protected function _prepareForm()
+    protected function _beforeToHtml()
     {
-        $form = new Varien_Data_Form();
-        $fieldset = $form->addFieldset('categories', array(
-            'legend' => $this->__('Categories')
-        ));
-        $fieldset->addType('categories', Mage::getConfig()->getBlockClassName('capita_ti/adminhtml_categories'));
-        $fieldset->addField('category_ids', 'categories', array(
-            'name' => 'category_ids',
-            'label' => $this->__('Categories'),
-            'value' => implode(',', (array) $this->getCategoryIds())
-        ));
-        $fieldset->addField('category_attributes', 'multiselect', array(
-            'name' => 'category_attributes',
-            'label' => $this->__('Category Attributes'),
-            'note' => $this->__(
-                'The default selection can be changed in <a href="%s">Configuration</a>.',
-                $this->getUrl('*/system_config/edit', array('section' => 'capita_ti'))),
-            'required' => true,
-            'values' => Mage::getSingleton('capita_ti/source_category_attributes')->toOptionArray(),
-            'value' => Mage::getStoreConfig('capita_ti/categories/attributes')
-        ));
-
-        $this->setForm($form);
-        return parent::_prepareForm();
+        $layout = $this->getLayout();
+        $this->append($layout->createBlock('capita_ti/adminhtml_request_new_tab_category_grid', 'request_tab_categories_grid'))
+            ->append($layout->createBlock('capita_ti/adminhtml_request_new_tab_category_serializer', 'request_tab_categories_grid_serializer'))
+            ->append($layout->createBlock('capita_ti/adminhtml_request_new_tab_category_attributes', 'request_tab_categories_attributes'));
+        return parent::_beforeToHtml();
     }
 }

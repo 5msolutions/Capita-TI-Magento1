@@ -46,6 +46,12 @@
         </block>
     </adminhtml_capita_request_categoriestab>
 
+    <adminhtml_capita_request_categoriesgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="capita_ti/adminhtml_request_new_tab_category_grid" name="request_tab_categories_grid" />
+        </block>
+    </adminhtml_capita_request_categoriesgrid>
+
     <adminhtml_capita_request_blockstab>
         <block type="core/text_list" name="root" output="toHtml">
             <block type="capita_ti/adminhtml_request_new_tab_blocks" name="request_tab_blocks" />
