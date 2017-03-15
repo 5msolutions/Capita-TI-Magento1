@@ -13,7 +13,8 @@ class Capita_TI_Model_Source_Category_Attributes
                 array('eq' => ''),
                 array('null' => true)
             ))
-            ->addFieldToFilter('additional_table.is_global', 0);
+            ->addFieldToFilter('additional_table.is_global', 0)
+            ->addFieldToFilter('additional_table.is_visible', 1);
         return $attributes;
     }
 
