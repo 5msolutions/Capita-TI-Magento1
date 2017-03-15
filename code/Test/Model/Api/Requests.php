@@ -27,7 +27,7 @@ class Capita_TI_Test_Model_Api_Requests extends EcomDev_PHPUnit_Test_Case
         $case->setMethod('POST');
         $case->setParam('source_language', 'en_US');
         $case->setParam('dest_language', array('fr_FR'));
-        $case->setParam('products_ids', '1');
+        $case->setParam('product_ids', '1');
         $case->setParam('product_attributes', array('name', 'description'));
 
         $request = $this->subject->startNewRequest($case);

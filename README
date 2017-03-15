@@ -22,6 +22,13 @@ Like any considerate design this can have wider applications.
 XLIFF is an open standard and another translator service need only change the
 descendents of Zend_Http_Client in "code/Model/Api/".
 
+Changes to the global (internationalised) data are tracked in "diff" tables.
+An entity is then considered translated if it has (localised) data in store views
+and no tracked changes.
+Not all fields need to be translated, there may be good reasons why some are not.
+We cannot guarantee that all translation work was done through this module so
+we must assume that any localised data is good. 
+
 
 Test Driven Development
 -----------------------
