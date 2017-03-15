@@ -33,7 +33,7 @@ class Capita_TI_Block_Adminhtml_Column_Filter_Languages extends Mage_Adminhtml_B
     {
         $languages = $this->_getLanguages();
 
-        $html = '<p>'.parent::getHtml().'</p><p>';
+        $html = '<p>'.parent::getHtml().'</p><p class="a-center">';
         foreach ($languages as $locale => $name) {
             if (preg_match('/^[a-z]+_([A-Z]+)$/', $locale, $m)) {
                 $country = strtolower($m[1]);
