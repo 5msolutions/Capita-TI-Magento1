@@ -106,6 +106,14 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         $this->renderLayout();
     }
 
+    public function blocksGridAction()
+    {
+        $this->loadLayout();
+        $this->getLayout()->getBlock('request_tab_blocks_grid')->setBlockIds(
+            $this->getRequest()->getParam('block_ids', array()));
+        $this->renderLayout();
+    }
+
     public function pagesTabAction()
     {
         $this->loadLayout();

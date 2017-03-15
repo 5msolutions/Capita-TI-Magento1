@@ -58,6 +58,12 @@
         </block>
     </adminhtml_capita_request_blockstab>
 
+    <adminhtml_capita_request_blocksgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="capita_ti/adminhtml_request_new_tab_block_grid" name="request_tab_blocks_grid" />
+        </block>
+    </adminhtml_capita_request_blocksgrid>
+
     <adminhtml_capita_request_pagestab>
         <block type="core/text_list" name="root" output="toHtml">
             <block type="capita_ti/adminhtml_request_new_tab_pages" name="request_tab_pages" />
