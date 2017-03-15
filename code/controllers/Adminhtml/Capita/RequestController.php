@@ -120,6 +120,14 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         $this->renderLayout();
     }
 
+    public function pagesGridAction()
+    {
+        $this->loadLayout();
+        $this->getLayout()->getBlock('request_tab_pages_grid')->setPageIds(
+            $this->getRequest()->getParam('page_ids', array()));
+        $this->renderLayout();
+    }
+
     public function deleteAction()
     {
         try {

@@ -70,6 +70,12 @@
         </block>
     </adminhtml_capita_request_pagestab>
 
+    <adminhtml_capita_request_pagesgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="capita_ti/adminhtml_request_new_tab_page_grid" name="request_tab_pages_grid" />
+        </block>
+    </adminhtml_capita_request_pagesgrid>
+
     <adminhtml_capita_request_view>
         <reference name="content">
             <block type="capita_ti/adminhtml_request_view" />
