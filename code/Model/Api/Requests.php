@@ -51,7 +51,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
 
         // now for the main content
         $productIds = $input->getParam('product_ids', '');
-        $productIds = array_filter(array_unique(preg_split('/[,&]/', $productIds)));
+        $productIds = array_filter(array_unique(explode('&', $productIds)));
         $productAttributes = $input->getParam('product_attributes', array());
         /* @var $products Mage_Catalog_Model_Resource_Product_Collection */
         $products = Mage::getResourceModel('catalog/product_collection');
@@ -59,21 +59,21 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $products->addAttributeToSelect($productAttributes);
 
         $categoryIds = $input->getParam('category_ids', '');
-        $categoryIds = array_filter(array_unique(explode(',', $categoryIds)));
+        $categoryIds = array_filter(array_unique(explode('&', $categoryIds)));
         $categoryAttributes = $input->getParam('category_attributes', array());
         /* @var $categories Mage_Catalog_Model_Resource_Category_Collection */
         $categories = Mage::getResourceModel('catalog/category_collection');
         $categories->addIdFilter($categoryIds);
         $categories->addAttributeToSelect($categoryAttributes);
 
-        $blockIds = $input->getParam('block_ids', array());
-        $blockIds = array_filter(array_unique($blockIds));
+        $blockIds = $input->getParam('block_ids', '');
+        $blockIds = array_filter(array_unique(explode('&', $blockIds)));
         /* @var $blocks Mage_Cms_Model_Resource_Block_Collection */
         $blocks = Mage::getResourceModel('cms/block_collection');
         $blocks->addFieldToFilter('block_id', array('in' => $blockIds));
 
-        $pageIds = $input->getParam('page_ids', array());
-        $pageIds = array_filter(array_unique($pageIds));
+        $pageIds = $input->getParam('page_ids', '');
+        $pageIds = array_filter(array_unique(explode('&', $pageIds)));
         /* @var $pages Mage_Cms_Model_Resource_Page_Collection */
         $pages = Mage::getResourceModel('cms/page_collection');
         $pages->addFieldToFilter('page_id', array('in' => $pageIds));
