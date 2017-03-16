@@ -189,7 +189,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         }
         catch (Mage_Core_Exception $e) {
             $this->_getSession()->addError($e->getMessage());
-            $this->_redirectReferer($this->getUrl('*/*'));
+            $this->_redirect('*/*');
         }
     }
 }
