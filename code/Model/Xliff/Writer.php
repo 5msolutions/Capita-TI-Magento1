@@ -164,6 +164,8 @@ class Capita_TI_Model_Xliff_Writer
         // use second XMLWriter without a document to produce valid, raw XML
         $xml = new XMLWriter();
         $xml->openMemory();
+        // XMLWriter needs an open (albeit temporary) element for text() to work correctly
+        $xml->startElement('_');
 
         // split text into array of basic HTML tags and CMS directives and text
         $parts = preg_split('/(<(?:{{.*?}}|.)*?>|{{.*?}})/', $source, null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -215,7 +217,8 @@ class Capita_TI_Model_Xliff_Writer
         }
         while ($xml->endElement());
 
-        return $xml->outputMemory();
+        // strip temporary holder element
+        return preg_replace('/^<_>(.*)<\/_>$/', '\1', $xml->outputMemory(), 1);
     }
 
     protected function _parseAttributes($text)

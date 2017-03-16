@@ -104,4 +104,19 @@ class Capita_TI_Test_Model_Xliff_Writer extends EcomDev_PHPUnit_Test_Case
         $this->assertXPathMatches('A big cup', 'string(//x:source)', 'HTML tags are encoded');
         $this->assertXPathMatches('big', 'string(//x:source/x:g[@ctype="italic"])', 'HTML tags are namespaced');
     }
+
+    /**
+     * @test
+     */
+    public function entitiesAreHtmlEncoded()
+    {
+        $cupboard = new Varien_Data_Collection();
+        $cupboard->addItem(new Varien_Object(array(
+                'type'=>'Knife & Fork',
+            )));
+        $this->writer->addCollection('cupboard', $cupboard, array('type'));
+        $this->writer->output($this->filename);
+        // if ampersand isn't encoded then an exception is thrown
+        $this->assertXPathMatches('Knife & Fork', 'string(//x:source)', 'HTML entities are encoded');
+    }
 }
