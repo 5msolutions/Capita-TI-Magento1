@@ -42,7 +42,7 @@ extends Mage_Adminhtml_Block_Widget_Grid
             'type' => 'text',
             'filter' => 'capita_ti/adminhtml_column_filter_languages',
             'renderer' => 'capita_ti/adminhtml_column_renderer_languages',
-            'width' => 100,
+            'width' => 170,
             'align' => 'center',
             'index' => 'translated',
             'sortable' => false
