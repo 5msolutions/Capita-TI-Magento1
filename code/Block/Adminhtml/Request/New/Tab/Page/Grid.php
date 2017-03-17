@@ -24,6 +24,7 @@ extends Mage_Adminhtml_Block_Widget_Grid
         $this->addColumn('in_pages', array(
             'header_css_class'  => 'a-center',
             'type'              => 'checkbox',
+            'renderer'          => 'capita_ti/adminhtml_column_renderer_checkbox',
             'name'              => 'in_pages',
             'values'            => (array) $this->getPageIds(),
             'align'             => 'center',
@@ -81,7 +82,13 @@ extends Mage_Adminhtml_Block_Widget_Grid
         }
         $this->setCollection($collection);
 
-        return parent::_prepareCollection();
+        // filters are applied here
+        parent::_prepareCollection();
+
+        $ids = $collection->getAllIds();
+        $this->getColumn('in_pages')->setAllValues($ids);
+
+        return $this;
     }
 
     public function getGridUrl()

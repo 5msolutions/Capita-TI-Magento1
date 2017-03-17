@@ -30,6 +30,7 @@ extends Mage_Adminhtml_Block_Widget_Grid
         $this->addColumn('in_products', array(
             'header_css_class'  => 'a-center',
             'type'              => 'checkbox',
+            'renderer'          => 'capita_ti/adminhtml_column_renderer_checkbox',
             'name'              => 'in_products',
             'values'            => $this->getProductIds(),
             'align'             => 'center',
@@ -123,7 +124,13 @@ extends Mage_Adminhtml_Block_Widget_Grid
         }
         $this->setCollection($collection);
 
-        return parent::_prepareCollection();
+        // filters are applied here
+        parent::_prepareCollection();
+
+        $ids = $collection->getAllIds();
+        $this->getColumn('in_products')->setAllValues($ids);
+
+        return $this;
     }
 
     public function getGridUrl()
