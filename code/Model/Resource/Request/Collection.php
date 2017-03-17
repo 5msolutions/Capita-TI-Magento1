@@ -13,32 +13,32 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         parent::_initSelect();
         $this->getSelect()
             ->joinLeft(
-                array('products' => $this->getConnection()->select()
+                array('productlist' => $this->getConnection()->select()
                     ->from($this->getTable('capita_ti/product'),
                         array('request_id', 'product_ids' => 'GROUP_CONCAT(DISTINCT product_id)'))
                     ->group('request_id')),
-                'main_table.request_id=products.request_id',
+                'main_table.request_id=productlist.request_id',
                 'product_ids')
             ->joinLeft(
-                array('categories' => $this->getConnection()->select()
+                array('categorylist' => $this->getConnection()->select()
                     ->from($this->getTable('capita_ti/category'),
                         array('request_id', 'category_ids' => 'GROUP_CONCAT(DISTINCT category_id)'))
                     ->group('request_id')),
-                'main_table.request_id=categories.request_id',
+                'main_table.request_id=categorylist.request_id',
                 'category_ids')
             ->joinLeft(
-                array('blocks' => $this->getConnection()->select()
+                array('blocklist' => $this->getConnection()->select()
                     ->from($this->getTable('capita_ti/block'),
                         array('request_id', 'block_ids' => 'GROUP_CONCAT(DISTINCT block_id)'))
                     ->group('request_id')),
-                'main_table.request_id=blocks.request_id',
+                'main_table.request_id=blocklist.request_id',
                 'block_ids')
             ->joinLeft(
-                array('pages' => $this->getConnection()->select()
+                array('pagelist' => $this->getConnection()->select()
                     ->from($this->getTable('capita_ti/page'),
                         array('request_id', 'page_ids' => 'GROUP_CONCAT(DISTINCT page_id)'))
                     ->group('request_id')),
-                'main_table.request_id=pages.request_id',
+                'main_table.request_id=pagelist.request_id',
                 'page_ids');
             return $this;
     }
@@ -145,6 +145,10 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         if ($productId instanceof Varien_Object) {
             $productId = $productId->getId();
         }
+        $this->join(
+            array('products' => 'capita_ti/product'),
+            'main_table.request_id=products.request_id',
+            '');
         $this->addFieldToFilter(
             'products.product_id',
             is_array($productId) ? array('in' => $productId) : $productId);
@@ -156,6 +160,10 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         if ($categoryId instanceof Varien_Object) {
             $categoryId = $categoryId->getId();
         }
+        $this->join(
+            array('categories' => 'capita_ti/category'),
+            'main_table.request_id=categories.request_id',
+            '');
         $this->addFieldToFilter('categories.category_id', $categoryId);
         return $this;
     }
@@ -165,6 +173,10 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         if ($blockId instanceof Varien_Object) {
             $blockId = $blockId->getId();
         }
+        $this->join(
+            array('blocks' => 'capita_ti/block'),
+            'main_table.request_id=blocks.request_id',
+            '');
         $this->addFieldToFilter(
             'blocks.block_id',
             is_array($blockId) ? array('in' => $blockId) : $blockId);
@@ -176,6 +188,10 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         if ($pageId instanceof Varien_Object) {
             $pageId = $pageId->getId();
         }
+        $this->join(
+            array('pages' => 'capita_ti/page'),
+            'main_table.request_id=pages.request_id',
+            '');
         $this->addFieldToFilter(
             'pages.page_id',
             is_array($pageId) ? array('in' => $pageId) : $pageId);
