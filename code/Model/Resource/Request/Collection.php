@@ -13,23 +13,34 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
         parent::_initSelect();
         $this->getSelect()
             ->joinLeft(
-                array('products' => $this->getTable('capita_ti/product')),
+                array('products' => $this->getConnection()->select()
+                    ->from($this->getTable('capita_ti/product'),
+                        array('request_id', 'product_ids' => 'GROUP_CONCAT(DISTINCT product_id)'))
+                    ->group('request_id')),
                 'main_table.request_id=products.request_id',
-                array('product_ids' => 'GROUP_CONCAT(DISTINCT product_id)'))
+                'product_ids')
             ->joinLeft(
-                array('categories' => $this->getTable('capita_ti/category')),
+                array('categories' => $this->getConnection()->select()
+                    ->from($this->getTable('capita_ti/category'),
+                        array('request_id', 'category_ids' => 'GROUP_CONCAT(DISTINCT category_id)'))
+                    ->group('request_id')),
                 'main_table.request_id=categories.request_id',
-                array('category_ids' => 'GROUP_CONCAT(DISTINCT category_id)'))
+                'category_ids')
             ->joinLeft(
-                array('blocks' => $this->getTable('capita_ti/block')),
+                array('blocks' => $this->getConnection()->select()
+                    ->from($this->getTable('capita_ti/block'),
+                        array('request_id', 'block_ids' => 'GROUP_CONCAT(DISTINCT block_id)'))
+                    ->group('request_id')),
                 'main_table.request_id=blocks.request_id',
-                array('block_ids' => 'GROUP_CONCAT(DISTINCT block_id)'))
+                'block_ids')
             ->joinLeft(
-                array('pages' => $this->getTable('capita_ti/page')),
+                array('pages' => $this->getConnection()->select()
+                    ->from($this->getTable('capita_ti/page'),
+                        array('request_id', 'page_ids' => 'GROUP_CONCAT(DISTINCT page_id)'))
+                    ->group('request_id')),
                 'main_table.request_id=pages.request_id',
-                array('page_ids' => 'GROUP_CONCAT(DISTINCT page_id)'))
-            ->group('main_table.request_id');
-        return $this;
+                'page_ids');
+            return $this;
     }
 
     public function getSelectCountSql()
