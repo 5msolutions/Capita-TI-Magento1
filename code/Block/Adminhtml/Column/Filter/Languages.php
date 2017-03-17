@@ -59,8 +59,10 @@ class Capita_TI_Block_Adminhtml_Column_Filter_Languages extends Mage_Adminhtml_B
                 return array('notnull' => true);
             case 'none':
                 return array('null' => true);
+            case 'null':
+                return null;
             default:
-                return parent::getCondition();
+                return array('like' => '%'.$this->getValue().'%');
         }
     }
 }
