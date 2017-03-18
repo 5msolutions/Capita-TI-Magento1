@@ -1,6 +1,6 @@
 <?php
 
-class Capita_TI_Block_Adminhtml_Column_Filter_Languages extends Mage_Adminhtml_Block_Widget_Grid_Column_Filter_Select
+class Capita_TI_Block_Adminhtml_Grid_Column_Filter_Languages extends Mage_Adminhtml_Block_Widget_Grid_Column_Filter_Select
 {
 
     protected function _getLanguages()

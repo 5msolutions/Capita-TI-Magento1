@@ -17,6 +17,10 @@ class Capita_TI_Model_Resource_Category_Collection extends Mage_Catalog_Model_Re
     protected function _initSelect()
     {
         parent::_initSelect();
+        $this->getSelect()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->columns('entity_id');
+
         $entityTable = $this->getEntity()->getEntityTable();
         $configTable = $this->getTable('core/config_data');
         $attributes = $this->_getTranslatableAttributeIds();

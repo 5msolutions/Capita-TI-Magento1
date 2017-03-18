@@ -1,6 +1,6 @@
 <?php
 
-class Capita_TI_Block_Adminhtml_Column_Renderer_Checkbox extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Checkbox
+class Capita_TI_Block_Adminhtml_Grid_Column_Renderer_Include extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Checkbox
 {
 
     public function renderHeader()

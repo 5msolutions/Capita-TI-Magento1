@@ -81,7 +81,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     public function productsGridAction()
     {
         $this->loadLayout();
-        $this->getLayout()->getBlock('request_tab_products_grid')->setProductIds(
+        $this->getLayout()->getBlock('request_tab_products_grid')->setEntityIds(
             $this->getRequest()->getParam('product_ids', array()));
         $this->renderLayout();
     }
@@ -95,7 +95,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     public function categoriesGridAction()
     {
         $this->loadLayout();
-        $this->getLayout()->getBlock('request_tab_categories_grid')->setCategoryIds(
+        $this->getLayout()->getBlock('request_tab_categories_grid')->setEntityIds(
             $this->getRequest()->getParam('category_ids', array()));
         $this->renderLayout();
     }
@@ -109,7 +109,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     public function blocksGridAction()
     {
         $this->loadLayout();
-        $this->getLayout()->getBlock('request_tab_blocks_grid')->setBlockIds(
+        $this->getLayout()->getBlock('request_tab_blocks_grid')->setEntityIds(
             $this->getRequest()->getParam('block_ids', array()));
         $this->renderLayout();
     }
@@ -123,7 +123,7 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
     public function pagesGridAction()
     {
         $this->loadLayout();
-        $this->getLayout()->getBlock('request_tab_pages_grid')->setPageIds(
+        $this->getLayout()->getBlock('request_tab_pages_grid')->setEntityIds(
             $this->getRequest()->getParam('page_ids', array()));
         $this->renderLayout();
     }
