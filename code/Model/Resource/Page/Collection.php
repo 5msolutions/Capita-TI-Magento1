@@ -39,4 +39,14 @@ class Capita_TI_Model_Resource_Page_Collection extends Mage_Cms_Model_Resource_P
         );
         return $this;
     }
+
+    public function getSelectCountSql()
+    {
+        $countSelect = parent::getSelectCountSql();
+
+        $countSelect->reset(Zend_Db_Select::COLUMNS);
+        $countSelect->columns('COUNT(DISTINCT main_table.page_id)');
+
+        return $countSelect;
+    }
 }

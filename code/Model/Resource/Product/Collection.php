@@ -59,4 +59,11 @@ class Capita_TI_Model_Resource_Product_Collection extends Mage_Catalog_Model_Res
         );
         return $this;
     }
+
+    public function getSelectCountSql()
+    {
+        $countSelect = parent::getSelectCountSql();
+        $countSelect->resetJoinLeft();
+        return $countSelect;
+    }
 }
