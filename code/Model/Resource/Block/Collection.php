@@ -12,7 +12,7 @@ class Capita_TI_Model_Resource_Block_Collection extends Mage_Cms_Model_Resource_
 
         $diffSelect = $this->getConnection()->select()
             ->from(array('blocks' => $this->getMainTable()), 'identifier')
-            ->join(array('diff' => $diffTable), 'blocks.block_id=diff.block_id', array('changes' => 'old_md5'))
+            ->join(array('diff' => $diffTable), 'blocks.block_id=diff.block_id', array('language', 'changes' => 'old_md5'))
             ->group('blocks.identifier');
         $groupSelect = $this->getConnection()->select()
             ->from(array('blocks' => $this->getMainTable()), 'identifier')
@@ -23,7 +23,7 @@ class Capita_TI_Model_Resource_Block_Collection extends Mage_Cms_Model_Resource_
                 array('translated' => 'GROUP_CONCAT(DISTINCT config.value)'))
             ->joinLeft(
                 array('diff' => $diffSelect),
-                'blocks.identifier = diff.identifier',
+                '(blocks.identifier = diff.identifier) AND (config.value = diff.language)',
                 'changes')
             ->group('blocks.identifier')
             ->where('config.value != ?', Mage::getStoreConfig('general/locale/code'))

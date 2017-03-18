@@ -73,13 +73,16 @@ class Capita_TI_Model_Api_Languages extends Capita_TI_Model_Api_Abstract
         return $this;
     }
 
-    public function getLanguagesInUse()
+    public function getLanguagesInUse($includeGlobal = true)
     {
         $codes = array();
         /* @var $store Mage_Core_Model_Store */
         foreach (Mage::app()->getStores() as $store) {
             $code = (string) $store->getConfig('general/locale/code');
             $codes[$code] = true;
+        }
+        if (!$includeGlobal) {
+            unset($codes[Mage::getStoreConfig('general/locale/code')]);
         }
         $languages = $this->getLanguages();
         return array_intersect_key($languages, $codes);

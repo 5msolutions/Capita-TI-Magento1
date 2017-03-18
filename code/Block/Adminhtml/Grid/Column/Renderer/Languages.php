@@ -9,8 +9,7 @@ extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 
     public function _getValue(Varien_Object $row)
     {
-        $languages = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse();
-        unset($languages[Mage::getStoreConfig('general/locale/code')]);
+        $languages = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse(false);
 
         $html = '';
         $value = parent::_getValue($row);

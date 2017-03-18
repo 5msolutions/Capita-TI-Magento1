@@ -31,7 +31,7 @@ class Capita_TI_Model_Resource_Category_Collection extends Mage_Catalog_Model_Re
             ->distinct()
             ->from(array('values' => $entityTable.'_text'), 'entity_id')
             ->join(array('config' => $configTable), '(scope_id=store_id) AND (path="general/locale/code")', 'value')
-            ->joinLeft(array('diff' => $diffTable), '(diff.entity_id=values.entity_id)', '')
+            ->joinLeft(array('diff' => $diffTable), '(diff.entity_id=values.entity_id) AND (diff.language=config.value)', '')
             ->where('store_id > 0')
             ->where('attribute_id IN (?)', $attributes)
             ->where('old_md5 IS NULL');
@@ -39,7 +39,7 @@ class Capita_TI_Model_Resource_Category_Collection extends Mage_Catalog_Model_Re
             ->distinct()
             ->from(array('values' => $entityTable.'_varchar'), 'entity_id')
             ->join(array('config' => $configTable), '(scope_id=store_id) AND (path="general/locale/code")', 'value')
-            ->joinLeft(array('diff' => $diffTable), '(diff.entity_id=values.entity_id)', '')
+            ->joinLeft(array('diff' => $diffTable), '(diff.entity_id=values.entity_id) AND (diff.language=config.value)', '')
             ->where('store_id > 0')
             ->where('attribute_id IN (?)', $attributes)
             ->where('old_md5 IS NULL');

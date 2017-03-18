@@ -5,8 +5,7 @@ class Capita_TI_Block_Adminhtml_Grid_Column_Filter_Languages extends Mage_Adminh
 
     protected function _getLanguages()
     {
-        $languages = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse();
-        unset($languages[Mage::getStoreConfig('general/locale/code')]);
+        $languages = Mage::getSingleton('capita_ti/api_languages')->getLanguagesInUse(false);
         return $languages;
     }
 

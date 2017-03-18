@@ -61,4 +61,22 @@ class Capita_TI_Helper_Data extends Mage_Core_Helper_Data
         $pages->addStoreFilter($stores);
         return $pages;
     }
+
+    /**
+     * Get possible locale codes (other than default store)
+     * 
+     * Does not compare with remote languages so might include
+     * untranslatable languages, albeit unlikely.
+     * 
+     * @return string[]
+     */
+    public function getNonDefaultLocales()
+    {
+        $locales = array();
+        foreach (Mage::app()->getStores() as $store) {
+            $locales[$store->getConfig('general/locale/code')] = true;
+        }
+        unset($locales[Mage::getStoreConfig('general/locale/code')]);
+        return array_keys($locales);
+    }
 }

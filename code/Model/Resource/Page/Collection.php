@@ -12,7 +12,7 @@ class Capita_TI_Model_Resource_Page_Collection extends Mage_Cms_Model_Resource_P
 
         $diffSelect = $this->getConnection()->select()
             ->from(array('pages' => $this->getMainTable()), 'identifier')
-            ->join(array('diff' => $diffTable), 'pages.page_id=diff.page_id', array('changes' => 'old_md5'))
+            ->join(array('diff' => $diffTable), 'pages.page_id=diff.page_id', array('language', 'changes' => 'old_md5'))
             ->group('pages.identifier');
         $groupSelect = $this->getConnection()->select()
             ->from(array('pages' => $this->getMainTable()), 'identifier')
@@ -23,7 +23,7 @@ class Capita_TI_Model_Resource_Page_Collection extends Mage_Cms_Model_Resource_P
                 array('translated' => 'GROUP_CONCAT(DISTINCT config.value)'))
             ->joinLeft(
                 array('diff' => $diffSelect),
-                'pages.identifier = diff.identifier',
+                '(pages.identifier = diff.identifier) AND (config.value = diff.language)',
                 'changes')
             ->group('pages.identifier')
             ->where('config.value != ?', Mage::getStoreConfig('general/locale/code'))

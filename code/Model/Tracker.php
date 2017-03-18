@@ -100,14 +100,18 @@ class Capita_TI_Model_Tracker
     protected function watchEntity($tableEntity, Varien_Object $object, $attributes)
     {
         $values = array();
+        $languages = Mage::helper('capita_ti')->getNonDefaultLocales();
         foreach ($attributes as $attribute) {
             if ($object->dataHasChangedFor($attribute)) {
-                $values[] = array(
-                    $object->getIdFieldName() => $object->getId(),
-                    'attribute' => $attribute,
-                    'old_value' => $object->getOrigData($attribute),
-                    'new_value' => $object->getData($attribute)
-                );
+                foreach ($languages as $language) {
+                    $values[] = array(
+                        $object->getIdFieldName() => $object->getId(),
+                        'language' => $language,
+                        'attribute' => $attribute,
+                        'old_value' => $object->getOrigData($attribute),
+                        'new_value' => $object->getData($attribute)
+                    );
+                }
             }
         }
         $this->insertRetire($tableEntity, $values);
@@ -182,11 +186,13 @@ class Capita_TI_Model_Tracker
 
     public function endWatch(Capita_TI_Model_Request $request)
     {
+        $languages = explode(',', $request->getDestLanguage());
         if ($request->getProductIds() && $request->getProductAttributes()) {
             $this->deleteRecords(
                 'capita_ti/product_diff',
                 array(
                     'entity_id' => $request->getProductIds(),
+                    'language'  => $languages,
                     'attribute' => $request->getProductAttributesArray()
                 ));
         }
@@ -195,6 +201,7 @@ class Capita_TI_Model_Tracker
                 'capita_ti/category_diff',
                 array(
                     'entity_id' => $request->getCategoryIds(),
+                    'language'  => $languages,
                     'attribute' => $request->getCategoryAttributesArray()
                 ));
         }
@@ -202,14 +209,16 @@ class Capita_TI_Model_Tracker
             $this->deleteRecords(
                 'capita_ti/block_diff',
                 array(
-                    'block_id' => $request->getBlockIds()
+                    'block_id' => $request->getBlockIds(),
+                    'language'  => $languages
                 ));
         }
         if ($request->getPageIds()) {
             $this->deleteRecords(
                 'capita_ti/page_diff',
                 array(
-                    'page_id' => $request->getPageIds()
+                    'page_id' => $request->getPageIds(),
+                    'language'  => $languages
                 ));
         }
         return $this;
