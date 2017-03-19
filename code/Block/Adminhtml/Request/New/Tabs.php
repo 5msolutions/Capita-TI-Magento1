@@ -28,6 +28,16 @@ class Capita_TI_Block_Adminhtml_Request_New_Tabs extends Mage_Adminhtml_Block_Wi
         return $this;
     }
 
+    public function addAttributesTab()
+    {
+        $this->addTab('attributes', array(
+            'label' => $this->__('Catalog Product Attributes'),
+            'url' => $this->getUrl('*/capita_request/attributesTab'),
+            'class' => 'ajax'
+        ));
+        return $this;
+    }
+
     public function addCategoriesTab()
     {
         $this->addTab('categories', array(

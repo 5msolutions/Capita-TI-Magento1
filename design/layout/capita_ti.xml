@@ -16,6 +16,7 @@
                 <!-- these methods create ajax sections -->
                 <action method="addGeneralTab" />
                 <action method="addProductsTab" />
+                <action method="addAttributesTab" />
                 <action method="addCategoriesTab" />
                 <action method="addBlocksTab" />
                 <action method="addPagesTab" />
@@ -39,6 +40,19 @@
             <block type="capita_ti/adminhtml_request_new_tab_product_grid" name="request_tab_products_grid" />
         </block>
     </adminhtml_capita_request_productsgrid>
+
+    <adminhtml_capita_request_attributestab>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="capita_ti/adminhtml_request_new_tab_attribute_grid" name="request_tab_attributes_grid" />
+            <block type="capita_ti/adminhtml_request_new_tab_attribute_serializer" name="request_tab_attributes_grid_serializer" />
+        </block>
+    </adminhtml_capita_request_attributestab>
+
+    <adminhtml_capita_request_attributesgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="capita_ti/adminhtml_request_new_tab_attribute_grid" name="request_tab_attributes_grid" />
+        </block>
+    </adminhtml_capita_request_attributesgrid>
 
     <adminhtml_capita_request_categoriestab>
         <block type="core/text_list" name="root" output="toHtml">

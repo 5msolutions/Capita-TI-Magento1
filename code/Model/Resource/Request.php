@@ -38,6 +38,11 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             ->where('request_id=?', $request->getId());
         $request->setPageIds($adapter->fetchCol($select));
 
+        $select = $adapter->select();
+        $select->from($this->getTable('capita_ti/attribute'), 'attribute_id')
+            ->where('request_id=?', $request->getId());
+        $request->setAttributeIds($adapter->fetchCol($select));
+
         return parent::_afterLoad($request);
     }
 
@@ -92,10 +97,6 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             $this->_saveDocuments($request);
         }
 
-        if ($request->dataHasChangedFor('product_attributes') || $request->dataHasChangedFor('category_attributes')) {
-            $this->_saveAttributes($request);
-        }
-
         if ($request->dataHasChangedFor('product_ids')) {
             $this->_saveProducts($request);
         }
@@ -110,6 +111,10 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
 
         if ($request->dataHasChangedFor('page_ids')) {
             $this->_savePages($request);
+        }
+
+        if ($request->dataHasChangedFor('attribute_ids')) {
+            $this->_saveAttributes($request);
         }
 
         return parent::_afterSave($request);
@@ -143,45 +148,6 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         }
         $request->setData('documents', $documents)
             ->setOrigData('documents', $documents);
-    }
-
-    protected function _saveAttributes(Capita_TI_Model_Request $request)
-    {
-        $attrTable = $this->getTable('capita_ti/attribute');
-        $productAttributes = $request->getProductAttributesArray();
-        $categoryAttributes = $request->getCategoryAttributesArray();
-        /* @var $eavConfig Mage_Eav_Model_Config */
-        $eavConfig = Mage::getSingleton('eav/config');
-        $productTypeId = $eavConfig->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getEntityTypeId();
-        $categoryTypeId = $eavConfig->getEntityType(Mage_Catalog_Model_Category::ENTITY)->getEntityTypeId();
-
-        /* @var $attributes Mage_Eav_Model_Resource_Entity_Attribute_Collection */
-        $attributes = Mage::getResourceModel('eav/entity_attribute_collection');
-        $attributes->getSelect()
-            ->where("(entity_type_id={$productTypeId}) AND (attribute_code IN (?))", $productAttributes)
-            ->orWhere("(entity_type_id={$categoryTypeId}) AND (attribute_code IN (?))", $categoryAttributes);
-        $attrIds = $attributes->getColumnValues('attribute_id');
-
-        $adapter = $this->_getWriteAdapter();
-        // delete rows no longer in collection
-        $condition = sprintf(
-            '(%s) AND (%s)',
-            $adapter->prepareSqlCondition('request_id', $request->getId()),
-            $adapter->prepareSqlCondition('attribute_id', array('nin' => $attrIds)));
-        $adapter->delete($attrTable, $condition);
-
-        $insertData = array();
-        foreach ($attrIds as $attrId) {
-            $insertData[] = array(
-                'request_id' => $request->getId(),
-                'attribute_id' => $attrId
-            );
-        }
-        $adapter->insertOnDuplicate($attrTable, $insertData);
-
-        // mark field as unchanged
-        $request->setOrigData('product_attributes', $request->getProductAttributes());
-        $request->setOrigData('category_attributes', $request->getCategoryAttributes());
     }
 
     protected function _saveProducts(Capita_TI_Model_Request $request)
@@ -286,5 +252,31 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
         }
         $adapter->insertOnDuplicate($pageTable, $insertData);
         $request->setOrigData('page_ids', $pageIds);
+    }
+
+    protected function _saveAttributes(Capita_TI_Model_Request $request)
+    {
+        $attributeTable = $this->getTable('capita_ti/attribute');
+        $attributeIds = $request->getAttributeIds();
+        if (!is_array($attributeIds)) {
+            $attributeIds = explode(',', (string) $attributeIds);
+        }
+
+        $adapter = $this->_getWriteAdapter();
+        $condition = sprintf(
+            '(%s) AND (%s)',
+            $adapter->prepareSqlCondition('request_id', $request->getId()),
+            $adapter->prepareSqlCondition('attribute_id', array('nin' => $attributeIds)));
+        $adapter->delete($attributeTable, $condition);
+
+        $insertData = array();
+        foreach ($attributeIds as $attributeId) {
+            $insertData[] = array(
+                'request_id' => $request->getId(),
+                'attribute_id' => $attributeId
+            );
+        }
+        $adapter->insertOnDuplicate($attributeTable, $insertData);
+        $request->setOrigData('attribute_ids', $attributeIds);
     }
 }

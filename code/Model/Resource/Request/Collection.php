@@ -39,7 +39,14 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
                         array('request_id', 'page_ids' => 'GROUP_CONCAT(DISTINCT page_id)'))
                     ->group('request_id')),
                 'main_table.request_id=pagelist.request_id',
-                'page_ids');
+                'page_ids')
+            ->joinLeft(
+                array('attributelist' => $this->getConnection()->select()
+                    ->from($this->getTable('capita_ti/attribute'),
+                        array('request_id', 'attribute_ids' => 'GROUP_CONCAT(DISTINCT attribute_id)'))
+                    ->group('request_id')),
+                'main_table.request_id=attributelist.request_id',
+                'attribute_ids');
             return $this;
     }
 
@@ -78,6 +85,7 @@ class Capita_TI_Model_Resource_Request_Collection extends Mage_Core_Model_Resour
                 $request->setCategoryIds(array_filter(explode(',', $request->getCategoryIds())));
                 $request->setBlockIds(array_filter(explode(',', $request->getBlockIds())));
                 $request->setPageIds(array_filter(explode(',', $request->getPageIds())));
+                $request->setAttributeIds(array_filter(explode(',', $request->getAttributeIds())));
             }
         }
 

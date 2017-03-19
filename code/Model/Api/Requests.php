@@ -58,6 +58,17 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $products->addIdFilter($productIds);
         $products->addAttributeToSelect($productAttributes);
 
+        $attributeIds = $input->getParam('attribute_ids', '');
+        $attributeIds = array_filter(array_unique(explode('&', $attributeIds)));
+        /* @var $attributes Mage_Eav_Model_Resource_Entity_Attribute_Collection */
+        $attributes = Mage::getResourceModel('eav/entity_attribute_collection');
+        $attributes->addFieldToFilter('attribute_id', array('in' => $attributeIds));
+        /* @var $attributeOptions Mage_Eav_Model_Resource_Entity_Attribute_Option_Collection */
+        $attributeOptions = Mage::getResourceModel('eav/entity_attribute_option_collection');
+        $attributeOptions->setAttributeFilter(array('in' => $attributeIds));
+        // joins the values for global store
+        $attributeOptions->setStoreFilter();
+
         $categoryIds = $input->getParam('category_ids', '');
         $categoryIds = array_filter(array_unique(explode('&', $categoryIds)));
         $categoryAttributes = $input->getParam('category_attributes', array());
@@ -78,7 +89,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         $pages = Mage::getResourceModel('cms/page_collection');
         $pages->addFieldToFilter('page_id', array('in' => $pageIds));
 
-        if (!$productIds && !$categoryIds && !$blockIds && !$pageIds) {
+        if (!$productIds && !$attributeIds && !$categoryIds && !$blockIds && !$pageIds) {
             throw new InvalidArgumentException(
                 Mage::helper('capita_ti')->__('Must specify at least one product, category, block or page'));
         }
@@ -90,6 +101,7 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
             ->setDestLanguage($destLanguage)
             ->setProductAttributes($productAttributes)
             ->setProductIds($productIds)
+            ->setAttributeIds($attributeIds)
             ->setCategoryIds($categoryIds)
             ->setCategoryAttributes($categoryAttributes)
             ->setBlockIds($blockIds)
@@ -113,6 +125,8 @@ class Capita_TI_Model_Api_Requests extends Capita_TI_Model_Api_Abstract
         /* @var $output Capita_TI_Model_Xliff_Writer */
         $output = Mage::getModel('capita_ti/xliff_writer');
         $output->addCollection(Mage_Catalog_Model_Product::ENTITY, $products, $newRequest->getProductAttributesArray());
+        $output->addCollection('eav_attribute', $attributes, array('frontend_label'));
+        $output->addCollection('eav_attribute_option', $attributeOptions, array('value'));
         $output->addCollection(Mage_Catalog_Model_Category::ENTITY, $categories, $newRequest->getCategoryAttributesArray());
         $output->addCollection(Mage_Cms_Model_Block::CACHE_TAG, $blocks, array('title', 'content'));
         $output->addCollection(Mage_Cms_Model_Page::CACHE_TAG, $pages, array('title', 'content', 'content_heading', 'meta_keywords', 'meta_description'));

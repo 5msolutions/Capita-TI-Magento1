@@ -3,6 +3,7 @@
 /**
  * @method int getProductCount()
  * @method int[] getProductIds()
+ * @method int[] getAttributeIds()
  * @method int getCategoryCount()
  * @method int[] getCategoryIds()
  * @method int getBlockCount()
@@ -16,6 +17,7 @@
  * @method string getStatus()
  * @method Capita_TI_Model_Request_Document[] getDocuments()
  * @method Capita_TI_Model_Request setProductIds(int[])
+ * @method Capita_TI_Model_Request setAttributeIds(int[])
  * @method Capita_TI_Model_Request setSourceLanguage(string)
  */
 class Capita_TI_Model_Request extends Mage_Core_Model_Abstract

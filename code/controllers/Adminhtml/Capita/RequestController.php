@@ -86,6 +86,20 @@ class Capita_TI_Adminhtml_Capita_RequestController extends Capita_TI_Controller_
         $this->renderLayout();
     }
 
+    public function attributesTabAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    public function attributesGridAction()
+    {
+        $this->loadLayout();
+        $this->getLayout()->getBlock('request_tab_attributes_grid')->setEntityIds(
+            $this->getRequest()->getParam('attribute_ids', array()));
+        $this->renderLayout();
+    }
+
     public function categoriesTabAction()
     {
         $this->loadLayout();
