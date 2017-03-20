@@ -4,6 +4,7 @@
 
 // compute possible target locale codes
 $languages = Mage::helper('capita_ti')->getNonDefaultLocales();
+if (!$languages) return;
 $languageSelects = array();
 
 foreach ($languages as $language) {
