@@ -86,6 +86,14 @@ class Capita_TI_Model_Resource_Request extends Mage_Core_Model_Resource_Db_Abstr
             );
         }
 
+        if (!$request->hasAttributeCount()) {
+            $request->setAttributeCount(
+                is_string($request->getAttributeIds()) ?
+                substr_count($request->getAttributeIds(), ',') + 1 :
+                count($request->getAttributeIds())
+            );
+        }
+
         $request->setUpdatedAt($this->formatDate(true));
 
         return parent::_beforeSave($request);
