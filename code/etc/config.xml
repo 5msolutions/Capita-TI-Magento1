@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Capita_TI>
-            <version>0.3.2</version>
+            <version>0.3.3</version>
         </Capita_TI>
     </modules>
 
@@ -46,6 +46,9 @@
                     <attribute>
                         <table>capita_ti_attribute</table>
                     </attribute>
+                    <attribute_diff>
+                        <table>capita_ti_attribute_diff</table>
+                    </attribute_diff>
                     <block_diff>
                         <table>capita_ti_block_diff</table>
                     </block_diff>
@@ -177,6 +180,14 @@
                     </capita_ti_track>
                 </observers>
             </catalog_product_save_after>
+            <catalog_entity_attribute_save_before>
+                <observers>
+                    <capita_ti_track>
+                        <class>capita_ti/tracker</class>
+                        <method>attributeSaveAfter</method>
+                    </capita_ti_track>
+                </observers>
+            </catalog_entity_attribute_save_before>
         </events>
         <layout>
             <updates>

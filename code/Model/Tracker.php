@@ -184,6 +184,54 @@ class Capita_TI_Model_Tracker
         }
     }
 
+    public function attributeSaveAfter(Varien_Event_Observer $observer)
+    {
+        /* @var $attribute Mage_Catalog_Model_Entity_Attribute */
+        $attribute = $observer->getAttribute();
+        $languages = Mage::helper('capita_ti')->getNonDefaultLocales();
+        $values = array();
+
+        $oldLabel = $attribute->getOrigData('frontend_label');
+        $newLabel = $attribute->getData('frontend_label');
+        if (is_array($newLabel)) {
+            $newLabel = $newLabel[0];
+        }
+        if ($oldLabel != $newLabel) {
+            foreach ($languages as $language) {
+                $values[] = array(
+                    'attribute_id' => $attribute->getAttributeId(),
+                    'language' => $language,
+                    'attribute' => 'frontend_label',
+                    'old_value' => $oldLabel,
+                    'new_value' => $newLabel
+                );
+            }
+        }
+
+        $options = $attribute->getOption();
+        $newValues = array();
+        foreach ((array) @$options['value'] as $optionId => $option) {
+            $newValues[$optionId] = $option[0];
+        }
+        $oldValues = Mage::getResourceModel('eav/entity_attribute_option_collection')
+            ->setAttributeFilter($attribute->getAttributeId())
+            ->setStoreFilter()
+            ->walk('getValue');
+        foreach (array_diff_assoc($newValues, $oldValues) as $optionId => $newValue) {
+            foreach ($languages as $language) {
+                $values[] = array(
+                    'attribute_id' => $attribute->getAttributeId(),
+                    'language' => $language,
+                    'attribute' => 'option_'.$optionId,
+                    'old_value' => $oldValues[$optionId],
+                    'new_value' => $newValue
+                );
+            }
+        }
+
+        $this->insertRetire('capita_ti/attribute_diff', $values);
+    }
+
     public function endWatch(Capita_TI_Model_Request $request)
     {
         $languages = explode(',', $request->getDestLanguage());
@@ -218,6 +266,14 @@ class Capita_TI_Model_Tracker
                 'capita_ti/page_diff',
                 array(
                     'page_id' => $request->getPageIds(),
+                    'language'  => $languages
+                ));
+        }
+        if ($request->getAttributeIds()) {
+            $this->deleteRecords(
+                'capita_ti/attribute_diff',
+                array(
+                    'attribute_id' => $request->getAttributeIds(),
                     'language'  => $languages
                 ));
         }
