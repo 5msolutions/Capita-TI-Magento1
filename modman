@@ -1,6 +1,5 @@
 modules/Capita_TI.xml app/etc/modules/Capita_TI.xml
 code app/code/community/Capita/TI
 design/layout/capita_ti.xml app/design/adminhtml/default/default/layout/capita_ti.xml
-design/template/capita/ti app/design/adminhtml/default/default/template/capita/ti
 locale/en_US.csv app/locale/en_US/Capita_TI.csv
 skin/images/capita skin/adminhtml/default/default/images/capita

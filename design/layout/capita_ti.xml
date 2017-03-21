@@ -108,16 +108,4 @@
             <block type="capita_ti/adminhtml_request_new" name="capita_ti_new_request" />
         </reference>
     </adminhtml_catalog_product_translate>
-
-    <adminhtml_capita_help_requests>
-        <update handle="popup" />
-        <reference name="content">
-            <block type="capita_ti/adminhtml_view_container" name="capita_ti_help_requests">
-                <action method="setHeaderText" translate="text">
-                    <text>About Translation Requests</text>
-                </action>
-                <block type="adminhtml/template" template="capita/ti/help/requests.phtml" name="capita_ti_view_requests" />
-            </block>
-        </reference>
-    </adminhtml_capita_help_requests>
 </layout>
