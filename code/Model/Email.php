@@ -81,8 +81,8 @@ class Capita_TI_Model_Email extends Mage_Core_Model_Email
      */
     public function sendFirstUse()
     {
-        $addresses = explode(',', Mage::getStoreConfig('capita_ti/first_use_email'));
-        if ($addresses) {
+        if (Mage::getStoreConfigFlag('capita_ti/first_use_email')) {
+            $addresses = explode(',', Mage::getStoreConfig('capita_ti/first_use_email'));
             $username = Mage::getStoreConfig('capita_ti/authentication/username');
             $this->setFromEmail(Mage::getStoreConfig('trans_email/ident_general/email'))
                 ->setFromName(Mage::getStoreConfig('trans_email/ident_general/name'))
