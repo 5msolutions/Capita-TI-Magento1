@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 
 SmartMATE Magento Connect Terms of Use
 
 1. Agreement to these Terms of use
@@ -62,41 +60,4 @@ If any provision of these Terms is invalid or unenforceable under applicable
 law, it shall not affect the validity or enforceability of the remainder of the 
 terms of these Terms and such provision shall be reformed to the minimum extent 
 necessary to make such provision valid and enforceable.
- -->
-<config>
-    <menu>
-        <system>
-            <children>
-                <capita_request translate="title" module="capita_ti">
-                    <title>Capita Translations</title>
-                    <action>adminhtml/capita_request</action>
-                    <sort_order>35</sort_order>
-                </capita_request>
-            </children>
-        </system>
-    </menu>
-    <acl>
-        <resources>
-            <admin>
-                <children>
-                    <system>
-                        <children>
-                            <capita_request translate="title" module="capita_ti">
-                                <title>Capita Translations</title>
-                                <sort_order>28</sort_order>
-                            </capita_request>
-                            <config>
-                                <children>
-                                    <capita_ti>
-                                        <title>Capita Translations</title>
-                                        <sort_order>70</sort_order>
-                                    </capita_ti>
-                                </children>
-                            </config>
-                        </children>
-                    </system>
-                </children>
-            </admin>
-        </resources>
-    </acl>
-</config>
+

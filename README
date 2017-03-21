@@ -60,3 +60,8 @@ to generate uploadable packages but that is not required.
 The old way (System > Magento Connect > Package Extensions) still works.
 The finished package then goes to the Connect Manager on a site or the
 Connect market instead.
+
+---
+
+Copyright 2017 5M Solutions Ltd.
+Written by Daniel Deady (daniel@clockworkgeek.com).
