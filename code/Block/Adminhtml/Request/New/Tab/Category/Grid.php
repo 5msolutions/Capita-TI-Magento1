@@ -16,24 +16,25 @@ extends Capita_TI_Block_Adminhtml_Grid_Translatable
 
     protected function _prepareColumns()
     {
+        $catalogHelper = Mage::helper('catalog');
         $this->addColumn('entity_id', array(
-            'header' => $this->__('ID'),
+            'header' => $catalogHelper->__('ID'),
             'type' => 'number',
             'index' => 'entity_id'
         ));
 
         $this->addColumn('name', array(
-            'header' => $this->__('Name'),
+            'header' => $catalogHelper->__('Name'),
             'index' => 'name',
         ));
 
         $this->addColumn('url_path', array(
-            'header' => $this->__('URL Path'),
+            'header' => $catalogHelper->__('URL Path'),
             'index' => 'url_path'
         ));
 
         $this->addColumn('is_active', array(
-            'header'    => Mage::helper('catalog')->__('Is Active'),
+            'header'    => $catalogHelper->__('Is Active'),
             'width'     => 60,
             'index'     => 'is_active',
             'type'      => 'options',
@@ -41,7 +42,7 @@ extends Capita_TI_Block_Adminhtml_Grid_Translatable
         ));
 
         $this->addColumn('include_in_menu', array(
-            'header'    => Mage::helper('catalog')->__('Include in Navigation Menu'),
+            'header'    => $catalogHelper->__('Include in Navigation Menu'),
             'width'     => 160,
             'index'     => 'include_in_menu',
             'type'      => 'options',

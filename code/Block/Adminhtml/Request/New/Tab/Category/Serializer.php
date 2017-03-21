@@ -9,7 +9,7 @@ extends Mage_Adminhtml_Block_Widget_Grid_Serializer
         parent::_construct();
         $this->initSerializerBlock(
             'request_tab_categories_grid',
-            'getCategoryIds',
+            'getEntityIds',
             'category_ids',
             'category_ids');
         return $this;

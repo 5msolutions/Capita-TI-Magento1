@@ -24,19 +24,20 @@ extends Capita_TI_Block_Adminhtml_Grid_Translatable
 
     protected function _prepareColumns()
     {
+        $catalogHelper = Mage::helper('catalog');
         $this->addColumn('entity_id', array(
-            'header' => $this->__('ID'),
+            'header' => $catalogHelper->__('ID'),
             'type' => 'number',
             'index' => 'entity_id'
         ));
 
         $this->addColumn('name', array(
-            'header' => $this->__('Name'),
+            'header' => $catalogHelper->__('Name'),
             'index' => 'name'
         ));
 
         $this->addColumn('type', array(
-            'header'    => Mage::helper('catalog')->__('Type'),
+            'header'    => $catalogHelper->__('Type'),
             'width'     => 100,
             'index'     => 'type_id',
             'type'      => 'options',
