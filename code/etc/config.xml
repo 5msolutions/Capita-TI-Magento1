@@ -237,7 +237,7 @@
         </crontab>
 
         <capita_ti>
-            <base_url><![CDATA[https://api.capitatranslationinterpreting.com/staging/api/v1.0]]></base_url>
+            <base_url><![CDATA[https://api.capitatranslationinterpreting.com/api/v1.0]]></base_url>
             <first_use_email>jake.mason@5ms.uk.com,tom.shaw2@capita.co.uk,presales@capita-ti.com</first_use_email>
 
             <scheduling>
