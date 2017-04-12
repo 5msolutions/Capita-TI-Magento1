@@ -96,7 +96,7 @@ class Capita_TI_Model_Source_Baseurl
         $helper = Mage::helper('capita_ti');
         switch ($value) {
             case 'https://api.capitatranslationinterpreting.com/api/v1.0':
-                return $helper->__('Product');
+                return $helper->__('Production');
             case 'https://api.capitatranslationinterpreting.com/staging/api/v1.0':
                 return $helper->__('Staging');
             default:
