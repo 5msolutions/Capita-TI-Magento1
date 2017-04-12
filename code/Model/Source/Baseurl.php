@@ -67,69 +67,40 @@
  * @copyright Copyright (c) 2017 5M Solutions Ltd. (http://www.5ms.co.uk/)
  */
 
-class Capita_TI_Model_Api_Abstract extends Zend_Http_Client
+class Capita_TI_Model_Source_Baseurl
 {
 
-    const CACHE_TAG = 'CAPITA_TI';
-
-    protected function getUsername()
+    public function getOptions()
     {
-        return Mage::getStoreConfig('capita_ti/authentication/username');
+        /* @var $helper Capita_TI_Helper_Data */
+        $helper = Mage::helper('capita_ti');
+        return array(
+            'https://api.capitatranslationinterpreting.com/api/v1.0' => $helper->__('Production'),
+            'https://api.capitatranslationinterpreting.com/staging/api/v1.0' => $helper->__('Staging')
+        );
     }
 
-    protected function getPassword()
+    public function toOptionArray()
     {
-        return Mage::helper('core')->decrypt(Mage::getStoreConfig('capita_ti/authentication/password'));
+        /* @var $helper Capita_TI_Helper_Data */
+        $helper = Mage::helper('capita_ti');
+        return array(
+            array('value' => 'https://api.capitatranslationinterpreting.com/api/v1.0', 'label' => $helper->__('Production')),
+            array('value' => 'https://api.capitatranslationinterpreting.com/staging/api/v1.0', 'label' => $helper->__('Staging'))
+        );
     }
 
-    protected function getEndpoint($path)
+    public function getOptionLabel($value)
     {
-        $baseUrl = Mage::getStoreConfig('capita_ti/authentication/base_url');
-        return rtrim($baseUrl, DS) . DS . ltrim($path, DS);
-    }
-
-    public function __construct($uri = null, $config = null)
-    {
-        $versionSlug = 'Magento '.Mage::getVersion();
-
-        if (extension_loaded('curl') && !@$config['adapter']) {
-            $config['adapter'] = 'Zend_Http_Client_Adapter_Curl';
-            $curlInfo = curl_version();
-            $versionSlug .= '; cURL '.@$curlInfo['version'];
+        /* @var $helper Capita_TI_Helper_Data */
+        $helper = Mage::helper('capita_ti');
+        switch ($value) {
+            case 'https://api.capitatranslationinterpreting.com/api/v1.0':
+                return $helper->__('Product');
+            case 'https://api.capitatranslationinterpreting.com/staging/api/v1.0':
+                return $helper->__('Staging');
+            default:
+                return '';
         }
-
-        if (!@$config['useragent']) {
-            $config['useragent'] = sprintf(
-                'Capita_TI/%s (%s)',
-                Mage::helper('capita_ti')->getModuleVersion(),
-                $versionSlug);
-        }
-
-        $this->setAuth($this->getUsername(), $this->getPassword());
-
-        parent::__construct($uri, $config);
-    }
-
-    /**
-     * Convert JSON to equivalent array
-     * 
-     * @param Zend_Http_Response $response
-     * @throws Zend_Http_Exception
-     * @throws Zend_Http_Client_Exception
-     * @return array
-     */
-    protected function decode(Zend_Http_Response $response)
-    {
-        if (!preg_match('#^application/json(?:$|;)#', $response->getHeader('Content-Type'))) {
-            if ($response->isError()) {
-                throw new Zend_Http_Exception($response->getMessage(), $response->getStatus());
-            }
-            throw new Zend_Http_Client_Exception('Content type is not JSON');
-        }
-        $body = Zend_Json::decode($response->getBody());
-        if ($response->isError()) {
-            throw new Zend_Http_Exception(@$body['message'], $response->getStatus());
-        }
-        return $body;
     }
 }
