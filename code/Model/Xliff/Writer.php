@@ -69,10 +69,6 @@
 
 /**
  * Writes an XML file without breaking memory limits (usually)
- * 
- * @method string getDatatype()
- * @method Capita_TI_Model_Xliff_Writer setDatatype(string $datatype)
- * @method Capita_TI_Model_Xliff_Writer setSourceLanguage(string $language)
  */
 class Capita_TI_Model_Xliff_Writer
 {
@@ -136,9 +132,6 @@ class Capita_TI_Model_Xliff_Writer
      * If $uri is an array the keys should be language codes.
      * 
      * @param array|string $uri
-     * @param traversable $entities
-     * @param string $group
-     * @param string[] $attributes
      */
     public function output($uri)
     {
@@ -285,7 +278,7 @@ class Capita_TI_Model_Xliff_Writer
         while ($xml->endElement());
 
         // strip temporary holder element
-        return preg_replace('/^<_>(.*)<\/_>$/', '\1', $xml->outputMemory(), 1);
+        return preg_replace('/^<_>(.*)<\/_>$/s', '\1', $xml->outputMemory(), 1);
     }
 
     protected function _parseAttributes($text)
