@@ -140,7 +140,7 @@ class Capita_TI_Model_Xliff_Writer
         foreach ($uris as $language => $uri) {
             $xml = new XMLWriter();
             $xml->openUri($uri);
-            $xml->startDocument();
+            $xml->startDocument('1.0', 'UTF-8');
             $xml->startElement('xliff');
             $xml->writeAttribute('version', '1.2');
             $xml->writeAttribute('xmlns', self::XML_NAMESPACE);
@@ -272,7 +272,10 @@ class Capita_TI_Model_Xliff_Writer
                 $xml->endElement();
             }
             else {
-                $xml->text($part);
+                // not all HTML entities are XML entities
+                // decode HTML first and some will be re-encoded by text()
+                // non-ANSI characters will stay as UTF-8
+                $xml->text(html_entity_decode($part));
             }
         }
         while ($xml->endElement());
@@ -292,7 +295,7 @@ class Capita_TI_Model_Xliff_Writer
                 $attributes['cms:'.$name] = base64_encode($val);
             }
             else {
-                $attributes['htm:'.$name] = $val;
+                $attributes['htm:'.$name] = html_entity_decode($val);
             }
         }
         // TODO: generate a unique htm:id
